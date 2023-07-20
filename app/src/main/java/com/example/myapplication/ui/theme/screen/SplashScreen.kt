@@ -1,4 +1,4 @@
-package com.example.myapplication.views
+package com.example.myapplication.ui.theme.screen
 
 
 import androidx.compose.foundation.Image
@@ -24,7 +24,6 @@ import com.example.myapplication.R
 
 @Composable
 fun SplashScreen(navHostController: NavHostController){
-
     Background()
     Logo()
     BottomView()
@@ -37,7 +36,7 @@ fun Logo(){
     ){
         Image(
             painter = painterResource(id = R.drawable.ic_logo),
-            contentDescription = "Logo",
+            contentDescription = "content_description_logo",
             modifier = Modifier
                 .height(149.dp)
                 .width(106.dp)
@@ -50,8 +49,8 @@ fun Logo(){
 fun Background(){
     Box(modifier = Modifier.fillMaxSize(),) {
         Image(
-            painter = painterResource(id = R.drawable.background),
-            contentDescription = "Background",
+            painter = painterResource(id = R.drawable.ic_background),
+            contentDescription = "content_description_background",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
@@ -69,17 +68,17 @@ fun BottomView(){
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
-                text = stringResource(id = R.string.we),
+                text = stringResource(id = R.string.ic_we),
                 color = Color.White
             )
             Image(
-                painter = painterResource(id = R.drawable.kalp),
+                painter = painterResource(id = R.drawable.ic_heart),
                 contentDescription = "Logo",
                 modifier = Modifier
                     .padding(top = 4.dp)
             )
             Text(
-                text = stringResource(id = R.string.Movie),
+                text = stringResource(id = R.string.ic_movie),
                 color = Color.White
             )
         }
