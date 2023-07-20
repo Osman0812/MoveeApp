@@ -2,7 +2,6 @@ package com.example.myapplication.ui.theme.screen
 
 
 import android.view.animation.OvershootInterpolator
-import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -55,8 +54,8 @@ private fun SplashScreenLogo(){
 private fun SplashScreenBackground(){
     Box(modifier = Modifier.fillMaxSize(),) {
         Image(
-            painter = painterResource(id = R.drawable.ic_background),
-            contentDescription = "content_description_background",
+            painter = painterResource(id = R.drawable.ic_splash_background),
+            contentDescription = "content_description_splash_screen_background",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )

@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                         SplashScreen(navHostController = navController)
                     }
                     composable(Screen.LoginScreen.route) {
-                        //Text(text = "Kureng")
+                        LoginScreen()
                     }
                 }
             }
