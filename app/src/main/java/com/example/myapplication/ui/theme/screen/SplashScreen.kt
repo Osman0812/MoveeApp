@@ -21,15 +21,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.myapplication.R
 
-
 @Composable
 fun SplashScreen(navHostController: NavHostController){
-    Background()
-    Logo()
-    BottomView()
+    SplashScreenBackground()
+    SplashScreenLogo()
+    SplashScreenBottomView()
 }
 @Composable
-fun Logo(){
+private fun SplashScreenLogo(){
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -44,9 +43,8 @@ fun Logo(){
     }
 }
 
-
 @Composable
-fun Background(){
+private fun SplashScreenBackground(){
     Box(modifier = Modifier.fillMaxSize(),) {
         Image(
             painter = painterResource(id = R.drawable.ic_background),
@@ -58,7 +56,7 @@ fun Background(){
 }
 
 @Composable
-fun BottomView(){
+private fun SplashScreenBottomView(){
     Box(modifier = Modifier
         .fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
