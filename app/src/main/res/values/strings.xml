@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">My Application</string>
-    <string name="ic_we">We</string>
-    <string name="ic_movie">Movie</string>
+    <string name="ic_we">Biz</string>
+    <string name="ic_movie">Film</string>
 </resources>
