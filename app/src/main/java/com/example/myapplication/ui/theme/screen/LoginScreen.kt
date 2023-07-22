@@ -57,7 +57,7 @@ fun LoginScreen(){
 }
 
 @Composable
-fun LoginScreenLogo(){
+private fun LoginScreenLogo(){
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -72,8 +72,9 @@ fun LoginScreenLogo(){
         )
     }
 }
+
 @Composable
-fun LoginScreenBackground(){
+private fun LoginScreenBackground(){
     Box(modifier = Modifier.fillMaxSize()){
         Image(
             painter = painterResource(id = R.drawable.ic_login_background),
@@ -152,7 +153,7 @@ private fun PasswordText(){
 }
 
 @Composable
-fun ForgotPasswordText(){
+private fun ForgotPasswordText(){
     Text(
         text = stringResource(id = R.string.forgot_password),
         style = TextStyle(Color.White),
@@ -162,7 +163,7 @@ fun ForgotPasswordText(){
 }
 
 @Composable
-fun LoginButton(){
+private fun LoginButton(){
     Button(onClick = { /*TODO*/ },
         colors = ButtonDefaults.buttonColors(Color.White),
         modifier = Modifier
@@ -211,7 +212,6 @@ private fun BottomView(){
         )
     }
 }
-
 
 fun Modifier.bottomBorder(strokeWidth: Dp, color: Color) = composed { composed(
     factory = {
