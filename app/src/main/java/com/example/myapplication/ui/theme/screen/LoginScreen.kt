@@ -66,6 +66,7 @@ fun LoginScreen(){
     EditText()
     //Spacer(modifier = Modifier.padding(5.dp))
     PasswordText()
+    ForgotPasswordText()
 
 }
 
@@ -184,6 +185,18 @@ private fun PasswordText(){
         )
     }
 }
+
+@Composable
+fun ForgotPasswordText(){
+
+    Text(
+        text = "Forgot Password?",
+        style = TextStyle(Color.White),
+        modifier = Modifier.offset(x = 250.dp, y = 485.dp)
+    )
+
+}
+
 
 @Composable
 fun Modifier.bottomBorder(strokeWidth: Dp, color: Color) = composed(
