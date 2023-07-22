@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.AbsoluteCutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,9 +22,12 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
@@ -47,26 +51,32 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
+import com.example.myapplication.ui.theme.vibrant_blue
 
 @Composable
 fun LoginScreen(){
     LoginScreenBackground()
     LoginScreenLogo()
 
-   
+
     EditText()
     //Spacer(modifier = Modifier.padding(5.dp))
     PasswordText()
     ForgotPasswordText()
+    LoginButton()
 
 }
 
@@ -118,7 +128,7 @@ private fun EditText(){
         Text(
             text = "Email",
             color = Color.White,
-            fontSize = 14.sp,
+            fontSize = 12.sp,
             modifier = Modifier
                 .padding(bottom = 4.dp)
 
@@ -133,7 +143,7 @@ private fun EditText(){
                 .width(310.dp)
                 .height(32.dp)
                 .background(Color.Transparent)
-                .bottomBorder(1.dp, Color.Gray),
+                .bottomBorder(1.dp, Color.LightGray),
             visualTransformation = VisualTransformation.None,
             textStyle = TextStyle(Color.White),
             
@@ -152,7 +162,7 @@ private fun PasswordText(){
     Column(modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)
-        .offset(x = 32.dp, y = 409.dp)
+        .offset(x = 32.dp, y = 415.dp)
 
 
     ){
@@ -160,7 +170,7 @@ private fun PasswordText(){
         Text(
             text = "Password",
             color = Color.White,
-            fontSize = 14.sp,
+            fontSize = 12.sp,
             modifier = Modifier
                 .padding(bottom = 4.dp)
 
@@ -173,7 +183,7 @@ private fun PasswordText(){
                 .width(310.dp)
                 .height(32.dp)
                 .background(Color.Transparent)
-                .bottomBorder(1.dp, Color.Gray),
+                .bottomBorder(1.dp, Color.LightGray),
             visualTransformation = PasswordVisualTransformation(),
             textStyle = TextStyle(Color.White),
             
@@ -181,7 +191,7 @@ private fun PasswordText(){
         Image(painterResource(
             id = R.drawable.ic_eye),
             "content_description_ic_eye",
-            modifier = Modifier.offset(x = 290.dp, y = (-25).dp)
+            modifier = Modifier.offset(x = 290.dp, y = (-22).dp)
         )
     }
 }
@@ -192,8 +202,35 @@ fun ForgotPasswordText(){
     Text(
         text = "Forgot Password?",
         style = TextStyle(Color.White),
-        modifier = Modifier.offset(x = 250.dp, y = 485.dp)
+        modifier = Modifier.offset(x = 265.dp, y = 495.dp),
+        fontSize = 12.sp
     )
+
+}
+
+@Composable
+fun LoginButton(){
+    Button(onClick = { /*TODO*/ },
+        colors = ButtonDefaults.buttonColors(Color.White),
+        modifier = Modifier
+            .padding(46.dp)
+            .fillMaxWidth()
+            .offset(y = 515.dp),
+
+
+        shape = RectangleShape
+    ) {
+        Text(
+            text = "Login",
+            color = vibrant_blue,
+            fontSize = 16.sp,
+            textAlign = TextAlign.Center,
+            style = TextStyle(
+                fontWeight = FontWeight.Bold
+            )
+
+        )
+    }
 
 }
 
