@@ -11,3 +11,4 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val vibrant_blue = Color(0xFF003DFF)
+val bottom_view_color = Color(0xffabb4bd)
