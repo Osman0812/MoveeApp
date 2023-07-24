@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -35,19 +37,33 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
-import com.example.myapplication.extension.bottomBorder
-import com.example.myapplication.ui.theme.bottomViewColor
-import com.example.myapplication.ui.theme.vibrantBlue
+import com.example.myapplication.util.extension.bottomBorder
+import com.example.myapplication.ui.theme.theme.bottomViewColor
+import com.example.myapplication.ui.theme.theme.vibrantBlue
 
-@Composable
+@Composable  
 fun LoginScreen(){
     LoginScreenBackground()
-    LoginScreenLogo()
-    EmailText()
-    PasswordText()
-    ForgotPasswordText()
-    LoginButton()
-    BottomView()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(start = 35.dp, end = 35.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Spacer(modifier = Modifier.padding(40.dp))
+        LoginScreenLogo()
+        Spacer(modifier = Modifier.padding(40.dp))
+        EmailText()
+        Spacer(modifier = Modifier.padding(15.dp))
+        PasswordText()
+        Spacer(modifier = Modifier.padding(5.dp))
+        ForgotPasswordText()
+        Spacer(modifier = Modifier.padding(40.dp))
+        LoginButton()
+        Spacer(modifier = Modifier.padding(bottom = 25.dp))
+        BottomView()
+    }
 }
 
 @Composable
@@ -60,21 +76,19 @@ private fun LoginScreenLogo(){
             painter = painterResource(id = R.drawable.ic_logo),
             contentDescription = "content_description_logo",
             modifier = Modifier
-                .padding(bottom = 305.dp)
+                //.padding(bottom = 305.dp)
         )
     }
 }
 
 @Composable
 private fun LoginScreenBackground(){
-    Box(modifier = Modifier.fillMaxSize()){
-        Image(
-            painter = painterResource(id = R.drawable.ic_login_background),
-            contentDescription = "content_description_login_screen_background",
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-    }
+    Image(
+        painter = painterResource(id = R.drawable.ic_login_background),
+        contentDescription = "content_description_login_screen_background",
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop,
+    )
 }
 
 @Composable
@@ -83,19 +97,16 @@ private fun EmailText(){
         mutableStateOf("")
     }
     Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(start = 49.dp, end = 49.dp, top = 85.dp),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Center
+        .fillMaxWidth()
     ){
         Text(
             text = stringResource(id = R.string.email),
             color = Color.White,
             fontSize = 12.sp,
-            modifier = Modifier
-                .padding(bottom = 25.dp),
+            modifier = Modifier,
             textAlign = TextAlign.Start
         )
+        Spacer(modifier = Modifier.padding(10.dp))
         BasicTextField(
             value = email,
             onValueChange = {email = it},
@@ -115,77 +126,70 @@ private fun PasswordText(){
         mutableStateOf("")
     }
     Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(start = 49.dp, end = 49.dp, top = 245.dp),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Center
+        .fillMaxWidth(),
+        verticalArrangement = Arrangement.SpaceBetween
     ){
         Text(
             text = stringResource(id = R.string.password),
             color = Color.White,
             fontSize = 12.sp,
-            modifier = Modifier
-                .padding(bottom = 15.dp)
         )
+        Spacer(modifier = Modifier.padding(6.dp))
         Image(painterResource(
             id = R.drawable.ic_eye),
             "content_description_ic_eye",
-            modifier = Modifier.padding(start = 295.dp)
-        )
-        BasicTextField(
-            value = password,
-            onValueChange = {password = it},
             modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.Transparent)
-                .bottomBorder(1.dp, bottomViewColor),
-            visualTransformation = PasswordVisualTransformation(),
-            textStyle = TextStyle(Color.White),
+                .fillMaxWidth(),
+            alignment = Alignment.CenterEnd
         )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            ) {
+            BasicTextField(
+                value = password,
+                onValueChange = {password = it},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Transparent)
+                    .bottomBorder(1.dp, bottomViewColor),
+                visualTransformation = PasswordVisualTransformation(),
+                textStyle = TextStyle(Color.White),
+                singleLine = true
+            )
+        }
     }
 }
 
 @Composable
 private fun ForgotPasswordText(){
-    Box(
-        contentAlignment = Alignment.BottomEnd,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(end = 49.dp, bottom = 170.dp)
-    ) {
-        Text(
-            text = stringResource(id = R.string.forgot_password),
-            style = TextStyle(Color.White),
-            //modifier = Modifier.offset(x = 265.dp, y = 495.dp),
-            fontSize = 12.sp,
-        )
-    }
+    Text(
+        text = stringResource(id = R.string.forgot_password),
+        style = TextStyle(Color.White),
+        fontSize = 12.sp,
+        modifier = Modifier.fillMaxSize(),
+        textAlign = TextAlign.End
+    )
+
 }
 
 @Composable
 private fun LoginButton(){
-    Box(
-        modifier = Modifier
-            .padding(49.dp)
-            .fillMaxSize()
-            .padding(bottom = 30.dp),
-        contentAlignment = Alignment.BottomCenter
-    ){
-        Button(onClick = { /*TODO*/ },
-            colors = ButtonDefaults.buttonColors(Color.White),
-            modifier = Modifier.fillMaxWidth(),
-            shape = RectangleShape,
-        ) {
-            Text(
-                text = stringResource(id = R.string.login),
-                color = vibrantBlue,
-                fontSize = 16.sp,
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold
-                )
+    Button(onClick = { /*TODO*/ },
+        colors = ButtonDefaults.buttonColors(Color.White),
+        modifier = Modifier.fillMaxWidth(),
+        shape = RectangleShape,
+    ) {
+        Text(
+            text = stringResource(id = R.string.login),
+            color = vibrantBlue,
+            fontSize = 16.sp,
+            textAlign = TextAlign.Center,
+            style = TextStyle(
+                fontWeight = FontWeight.Bold
             )
-        }
+        )
     }
 }
 
