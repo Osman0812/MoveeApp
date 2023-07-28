@@ -19,8 +19,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,12 +39,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
+import com.example.myapplication.data.remote.model.ValidationRequest
 import com.example.myapplication.util.extension.bottomBorder
 import com.example.myapplication.ui.theme.theme.bottomViewColor
 import com.example.myapplication.ui.theme.theme.vibrantBlue
+import com.example.myapplication.viewmodel.AuthViewModel
 
-@Composable  
-fun LoginScreen(){
+@Composable
+
+fun LoginScreen(authViewModel: AuthViewModel) {
+
+    val username by remember {
+        mutableStateOf("")
+    }
+    val password by remember {
+        mutableStateOf("")
+    }
+
+
     LoginScreenBackground()
     Column(
         modifier = Modifier
@@ -60,29 +74,28 @@ fun LoginScreen(){
         Spacer(modifier = Modifier.padding(5.dp))
         ForgotPasswordText()
         Spacer(modifier = Modifier.padding(40.dp))
-        LoginButton()
+        LoginButton(authViewModel)
         Spacer(modifier = Modifier.padding(bottom = 25.dp))
         BottomView()
     }
 }
 
 @Composable
-private fun LoginScreenLogo(){
+private fun LoginScreenLogo() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Image(
             painter = painterResource(id = R.drawable.ic_logo),
             contentDescription = "content_description_logo",
             modifier = Modifier
-                //.padding(bottom = 305.dp)
         )
     }
 }
 
 @Composable
-private fun LoginScreenBackground(){
+private fun LoginScreenBackground() {
     Image(
         painter = painterResource(id = R.drawable.ic_login_background),
         contentDescription = "content_description_login_screen_background",
@@ -92,13 +105,14 @@ private fun LoginScreenBackground(){
 }
 
 @Composable
-private fun EmailText(){
+private fun EmailText() {
     var email by remember {
         mutableStateOf("")
     }
-    Column(modifier = Modifier
-        .fillMaxWidth()
-    ){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
         Text(
             text = stringResource(id = R.string.email),
             color = Color.White,
@@ -109,7 +123,7 @@ private fun EmailText(){
         Spacer(modifier = Modifier.padding(10.dp))
         BasicTextField(
             value = email,
-            onValueChange = {email = it},
+            onValueChange = { email = it },
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.Transparent)
@@ -121,22 +135,25 @@ private fun EmailText(){
 }
 
 @Composable
-private fun PasswordText(){
+private fun PasswordText() {
     var password by remember {
         mutableStateOf("")
     }
-    Column(modifier = Modifier
-        .fillMaxWidth(),
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
         verticalArrangement = Arrangement.SpaceBetween
-    ){
+    ) {
         Text(
             text = stringResource(id = R.string.password),
             color = Color.White,
             fontSize = 12.sp,
         )
         Spacer(modifier = Modifier.padding(6.dp))
-        Image(painterResource(
-            id = R.drawable.ic_eye),
+        Image(
+            painterResource(
+                id = R.drawable.ic_eye
+            ),
             "content_description_ic_eye",
             modifier = Modifier
                 .fillMaxWidth(),
@@ -146,10 +163,10 @@ private fun PasswordText(){
             modifier = Modifier
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(5.dp),
-            ) {
+        ) {
             BasicTextField(
                 value = password,
-                onValueChange = {password = it},
+                onValueChange = { password = it },
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.Transparent)
@@ -163,7 +180,7 @@ private fun PasswordText(){
 }
 
 @Composable
-private fun ForgotPasswordText(){
+private fun ForgotPasswordText() {
     Text(
         text = stringResource(id = R.string.forgot_password),
         style = TextStyle(Color.White),
@@ -171,12 +188,23 @@ private fun ForgotPasswordText(){
         modifier = Modifier.fillMaxSize(),
         textAlign = TextAlign.End
     )
-
 }
 
 @Composable
-private fun LoginButton(){
-    Button(onClick = { /*TODO*/ },
+private fun LoginButton(authViewModel: AuthViewModel) {
+
+    val name = "Osman0812"
+    val password = "Memati2013"
+
+    val scope = rememberCoroutineScope()
+    val tokenState by authViewModel.requestToken.observeAsState()
+    val validation by authViewModel.validationResponse.observeAsState()
+    Button(
+        onClick = {
+
+           authViewModel.createRequestToken()
+
+                  },
         colors = ButtonDefaults.buttonColors(Color.White),
         modifier = Modifier.fillMaxWidth(),
         shape = RectangleShape,
@@ -191,10 +219,90 @@ private fun LoginButton(){
             )
         )
     }
+
+
+    /*
+
+            var token = ""
+            if (tokenState != null){
+                tokenState?.let {state ->
+                    if (state.isSuccessful) {
+                        scope.launch {
+                            token = state.body()?.request_token.toString()
+                            if (!token.isNullOrEmpty()) {
+                                println("Received Token: $token")
+                            } else {
+                                println("Failed to get a valid token!")
+                            }
+                        }.isCompleted.let {
+                            if (it){
+                                val user = ValidationRequest(name,password,token)
+                                authViewModel.validateRequestToken(user)
+                                validation?.let {response ->
+                                    if (response.isSuccessful){
+                                        val success = response.body()?.success
+                                        if (success == true){
+                                            println("Succeed!")
+
+                                        }else{
+                                            println("Failed response")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+
+                    } else {
+                        println("Failed to get token: ${state.errorBody()?.string()}")
+                    }
+                }
+            }else{
+                println("Failed get token!")
+            }
+
+     */
+
+
+    tokenState?.let { state ->
+        if (state.isSuccessful) {
+            val token = state.body()?.request_token
+            if (!token.isNullOrEmpty()) {
+                println("Received Token: $token")
+                val user = ValidationRequest(name, password, token)
+                authViewModel.performValidation(name,password,token)
+            } else {
+                println("Failed to get a valid token!")
+            }
+        } else {
+            println("Ez")
+        }
+    }
+/*
+// Observing validation LiveData
+    validation?.let { response ->
+        if (response.isSuccessful) {
+            val success = response.body()?.success
+            if (success == true) {
+                println("Succeed!")
+            } else {
+                println("Failed response")
+            }
+        }
+    }
+
+
+ */
+
+
+
+
+
 }
 
+
 @Composable
-private fun BottomView(){
+private fun BottomView() {
     Row(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.Center,
