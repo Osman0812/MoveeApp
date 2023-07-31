@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.theme.screen
 
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,17 +19,18 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -38,25 +40,17 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.myapplication.R
 import com.example.myapplication.data.remote.model.ValidationRequest
+import com.example.myapplication.navigation.Screen
 import com.example.myapplication.util.extension.bottomBorder
 import com.example.myapplication.ui.theme.theme.bottomViewColor
 import com.example.myapplication.ui.theme.theme.vibrantBlue
 import com.example.myapplication.viewmodel.AuthViewModel
 
 @Composable
-
-fun LoginScreen(authViewModel: AuthViewModel) {
-
-    val username by remember {
-        mutableStateOf("")
-    }
-    val password by remember {
-        mutableStateOf("")
-    }
-
-
+fun LoginScreen(authViewModel: AuthViewModel,navHostController: NavHostController) {
     LoginScreenBackground()
     Column(
         modifier = Modifier
@@ -68,18 +62,17 @@ fun LoginScreen(authViewModel: AuthViewModel) {
         Spacer(modifier = Modifier.padding(40.dp))
         LoginScreenLogo()
         Spacer(modifier = Modifier.padding(40.dp))
-        EmailText()
+        val userName = emailText()
         Spacer(modifier = Modifier.padding(15.dp))
-        PasswordText()
+        val password = passwordText()
         Spacer(modifier = Modifier.padding(5.dp))
         ForgotPasswordText()
         Spacer(modifier = Modifier.padding(40.dp))
-        LoginButton(authViewModel)
+        LoginButton(authViewModel,userName,password,navHostController)
         Spacer(modifier = Modifier.padding(bottom = 25.dp))
         BottomView()
     }
 }
-
 @Composable
 private fun LoginScreenLogo() {
     Box(
@@ -93,7 +86,6 @@ private fun LoginScreenLogo() {
         )
     }
 }
-
 @Composable
 private fun LoginScreenBackground() {
     Image(
@@ -103,9 +95,8 @@ private fun LoginScreenBackground() {
         contentScale = ContentScale.Crop,
     )
 }
-
 @Composable
-private fun EmailText() {
+private fun emailText(): String {
     var email by remember {
         mutableStateOf("")
     }
@@ -132,10 +123,10 @@ private fun EmailText() {
             textStyle = TextStyle(Color.White),
         )
     }
+    return email
 }
-
 @Composable
-private fun PasswordText() {
+private fun passwordText(): String{
     var password by remember {
         mutableStateOf("")
     }
@@ -177,8 +168,8 @@ private fun PasswordText() {
             )
         }
     }
+    return password
 }
-
 @Composable
 private fun ForgotPasswordText() {
     Text(
@@ -189,21 +180,21 @@ private fun ForgotPasswordText() {
         textAlign = TextAlign.End
     )
 }
-
 @Composable
-private fun LoginButton(authViewModel: AuthViewModel) {
-
-    val name = "Osman0812"
-    val password = "Memati2013"
-
-    val scope = rememberCoroutineScope()
-    val tokenState by authViewModel.requestToken.observeAsState()
-    val validation by authViewModel.validationResponse.observeAsState()
+private fun LoginButton(authViewModel: AuthViewModel,userName: String,password: String,navHostController: NavHostController) {
+    val validation by authViewModel.sessionId.observeAsState()
+    val context = LocalContext.current
+    LaunchedEffect(validation ){
+        if (!validation.isNullOrEmpty()){
+            println(validation.toString())
+            saveSessionId(context,validation.toString())
+            navigationToMainScreen(navHostController)
+        }
+    }
     Button(
         onClick = {
-
-           authViewModel.createRequestToken()
-
+            val user = ValidationRequest(userName, password)
+            authViewModel.performValidation(user)
                   },
         colors = ButtonDefaults.buttonColors(Color.White),
         modifier = Modifier.fillMaxWidth(),
@@ -219,88 +210,7 @@ private fun LoginButton(authViewModel: AuthViewModel) {
             )
         )
     }
-
-
-    /*
-
-            var token = ""
-            if (tokenState != null){
-                tokenState?.let {state ->
-                    if (state.isSuccessful) {
-                        scope.launch {
-                            token = state.body()?.request_token.toString()
-                            if (!token.isNullOrEmpty()) {
-                                println("Received Token: $token")
-                            } else {
-                                println("Failed to get a valid token!")
-                            }
-                        }.isCompleted.let {
-                            if (it){
-                                val user = ValidationRequest(name,password,token)
-                                authViewModel.validateRequestToken(user)
-                                validation?.let {response ->
-                                    if (response.isSuccessful){
-                                        val success = response.body()?.success
-                                        if (success == true){
-                                            println("Succeed!")
-
-                                        }else{
-                                            println("Failed response")
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-
-                    } else {
-                        println("Failed to get token: ${state.errorBody()?.string()}")
-                    }
-                }
-            }else{
-                println("Failed get token!")
-            }
-
-     */
-
-
-    tokenState?.let { state ->
-        if (state.isSuccessful) {
-            val token = state.body()?.request_token
-            if (!token.isNullOrEmpty()) {
-                println("Received Token: $token")
-                val user = ValidationRequest(name, password, token)
-                authViewModel.performValidation(name,password,token)
-            } else {
-                println("Failed to get a valid token!")
-            }
-        } else {
-            println("Ez")
-        }
-    }
-/*
-// Observing validation LiveData
-    validation?.let { response ->
-        if (response.isSuccessful) {
-            val success = response.body()?.success
-            if (success == true) {
-                println("Succeed!")
-            } else {
-                println("Failed response")
-            }
-        }
-    }
-
-
- */
-
-
-
-
-
 }
-
-
 @Composable
 private fun BottomView() {
     Row(
@@ -330,6 +240,15 @@ private fun BottomView() {
         )
     }
 }
+private fun navigationToMainScreen(navHostController: NavHostController){
+    navHostController.navigate(Screen.MainScreen.route)
+}
+private fun saveSessionId(context: Context, sessionId: String) {
+    val sharedPreferences = context.getSharedPreferences("com.example.myapplication", Context.MODE_PRIVATE)
+    sharedPreferences.edit().putString("sessionId", sessionId).apply()
+}
+
+
 
 
 
