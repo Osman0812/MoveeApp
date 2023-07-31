@@ -19,19 +19,21 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             val viewModel = viewModel<AuthViewModel>()
             MyApplicationTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = Screen.SplashScreen.route) {
+                NavHost(
+                    navController = navController,
+                    startDestination = Screen.SplashScreen.route
+                ) {
                     composable(Screen.SplashScreen.route) {
                         SplashScreen(navHostController = navController)
                     }
                     composable(Screen.LoginScreen.route) {
                         LoginScreen(viewModel, navHostController = navController)
                     }
-                    composable(Screen.MainScreen.route){
+                    composable(Screen.MainScreen.route) {
                         MainScreen()
                     }
                 }

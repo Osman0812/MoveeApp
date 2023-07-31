@@ -2,6 +2,7 @@ package com.example.myapplication.ui.theme.screen
 
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavHostController
 import com.example.myapplication.R
 import com.example.myapplication.data.remote.model.ValidationRequest
@@ -47,10 +49,12 @@ import com.example.myapplication.navigation.Screen
 import com.example.myapplication.util.extension.bottomBorder
 import com.example.myapplication.ui.theme.theme.bottomViewColor
 import com.example.myapplication.ui.theme.theme.vibrantBlue
+import com.example.myapplication.util.extension.DataStore
+import com.example.myapplication.util.extension.ResultOf
 import com.example.myapplication.viewmodel.AuthViewModel
 
 @Composable
-fun LoginScreen(authViewModel: AuthViewModel,navHostController: NavHostController) {
+fun LoginScreen(authViewModel: AuthViewModel, navHostController: NavHostController) {
     LoginScreenBackground()
     Column(
         modifier = Modifier
@@ -68,11 +72,12 @@ fun LoginScreen(authViewModel: AuthViewModel,navHostController: NavHostControlle
         Spacer(modifier = Modifier.padding(5.dp))
         ForgotPasswordText()
         Spacer(modifier = Modifier.padding(40.dp))
-        LoginButton(authViewModel,userName,password,navHostController)
+        LoginButton(authViewModel, userName, password, navHostController)
         Spacer(modifier = Modifier.padding(bottom = 25.dp))
         BottomView()
     }
 }
+
 @Composable
 private fun LoginScreenLogo() {
     Box(
@@ -86,6 +91,7 @@ private fun LoginScreenLogo() {
         )
     }
 }
+
 @Composable
 private fun LoginScreenBackground() {
     Image(
@@ -95,6 +101,7 @@ private fun LoginScreenBackground() {
         contentScale = ContentScale.Crop,
     )
 }
+
 @Composable
 private fun emailText(): String {
     var email by remember {
@@ -125,8 +132,9 @@ private fun emailText(): String {
     }
     return email
 }
+
 @Composable
-private fun passwordText(): String{
+private fun passwordText(): String {
     var password by remember {
         mutableStateOf("")
     }
@@ -170,6 +178,7 @@ private fun passwordText(): String{
     }
     return password
 }
+
 @Composable
 private fun ForgotPasswordText() {
     Text(
@@ -180,22 +189,42 @@ private fun ForgotPasswordText() {
         textAlign = TextAlign.End
     )
 }
+
 @Composable
-private fun LoginButton(authViewModel: AuthViewModel,userName: String,password: String,navHostController: NavHostController) {
-    val validation by authViewModel.sessionId.observeAsState()
+private fun LoginButton(
+    authViewModel: AuthViewModel,
+    userName: String,
+    password: String,
+    navHostController: NavHostController
+) {
+    val validation by authViewModel.sessionId.observeAsState(initial = ResultOf.Initial)
     val context = LocalContext.current
-    LaunchedEffect(validation ){
-        if (!validation.isNullOrEmpty()){
-            println(validation.toString())
-            saveSessionId(context,validation.toString())
-            navigationToMainScreen(navHostController)
+    var isLoading by remember { mutableStateOf(false) }
+    LaunchedEffect(validation) {
+        when (validation) {
+            is ResultOf.Initial -> {
+                isLoading = false
+            }
+            is ResultOf.Loading -> {
+                isLoading = true
+            }
+            is ResultOf.Success -> {
+                println(validation.toString())
+                saveSessionId(context, validation.toString())
+                navigationToMainScreen(navHostController)
+                isLoading = false
+            }
+            is ResultOf.Error -> {
+                Toast.makeText(context, "Failed!", Toast.LENGTH_LONG).show()
+                isLoading = false
+            }
         }
     }
     Button(
         onClick = {
             val user = ValidationRequest(userName, password)
             authViewModel.performValidation(user)
-                  },
+        },
         colors = ButtonDefaults.buttonColors(Color.White),
         modifier = Modifier.fillMaxWidth(),
         shape = RectangleShape,
@@ -211,6 +240,7 @@ private fun LoginButton(authViewModel: AuthViewModel,userName: String,password: 
         )
     }
 }
+
 @Composable
 private fun BottomView() {
     Row(
@@ -240,12 +270,14 @@ private fun BottomView() {
         )
     }
 }
-private fun navigationToMainScreen(navHostController: NavHostController){
+
+private fun navigationToMainScreen(navHostController: NavHostController) {
     navHostController.navigate(Screen.MainScreen.route)
 }
-private fun saveSessionId(context: Context, sessionId: String) {
-    val sharedPreferences = context.getSharedPreferences("com.example.myapplication", Context.MODE_PRIVATE)
-    sharedPreferences.edit().putString("sessionId", sessionId).apply()
+
+private suspend fun saveSessionId(context: Context, sessionId: String) {
+    val store = DataStore()
+    store.writeToDataStore(context,sessionId)
 }
 
 

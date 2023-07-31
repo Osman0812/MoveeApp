@@ -15,7 +15,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
     @Provides
     fun provideApiKeyInterceptor(): ApiKeyInterceptor {
         return ApiKeyInterceptor()

@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.data.remote.model.ValidationCreateRequest
 import com.example.myapplication.data.remote.model.ValidationRequest
 import com.example.myapplication.data.repository.AuthRepository
+import com.example.myapplication.util.extension.ApiResult
+import com.example.myapplication.util.extension.ResultOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -16,46 +18,46 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(private val authRepository: AuthRepository) : ViewModel() {
     var requestToken = ""
-    private val _sessionId = MutableLiveData<String>()
-    val sessionId: LiveData<String> = _sessionId
+    private val _sessionId = MutableLiveData<ResultOf<Unit>>()
+    val sessionId: LiveData<ResultOf<Unit>> = _sessionId
     fun createRequestToken(): Deferred<Unit> = viewModelScope.async {
-        val result = authRepository.createRequestToken()
-        requestToken = result.body()!!.request_token
-    }
-    fun performValidation(user: ValidationRequest){
-        viewModelScope.launch {
-            val job = createRequestToken()
-            job.await()
-            try {
-                val response = authRepository.validateRequestToken(user, requestToken)
-                if (response.isSuccessful) {
-                    val result = response.body()
-                    if (result != null) {
-                         println("Validation Succeeded: ${result.success}")
-                         val task = getSessionId()
-                         task.await()
-                    }
-                }
-            } catch (e: Exception) {
-                println("Validation API Exception: ${e.message}")
-                e.printStackTrace()
+        when (val result = authRepository.createRequestToken()) {
+            is ApiResult.Success -> {
+                val token = result.response.body()
+                requestToken = token?.requestToken.toString()
+            }
+            is ApiResult.Error -> {
+                _sessionId.value = ResultOf.Error(Exception("Request Token Failed!"))
             }
         }
     }
-    fun getSessionId(): Deferred<Unit> = viewModelScope.async  {
+    fun performValidation(user: ValidationRequest) {
         viewModelScope.launch {
-            try {
-                val token = ValidationCreateRequest(requestToken)
-                val response = authRepository.createSessionId(token)
-                if (response.isSuccessful) {
-                    val result = response.body()
-                    if (result != null) {
-                        _sessionId.value = result.session_id
-                    }
+            val job = createRequestToken()
+            job.await()
+            when (val apiResponse = authRepository.validateRequestToken(user, requestToken)) {
+                is ApiResult.Success -> {
+                    val result = apiResponse.response.body()
+                    println("Validation Succeeded: ${result?.success}")
+                    getSessionId()
                 }
-            } catch (e: Exception) {
-                println("Session ID API Exception: ${e.message}")
-                e.printStackTrace()
+                is ApiResult.Error -> {
+                    _sessionId.value = ResultOf.Error(Exception("Validation Failed!"))
+                }
+            }
+        }
+    }
+    fun getSessionId() {
+        viewModelScope.launch {
+            val token = ValidationCreateRequest(requestToken)
+            when (val apiResponse = authRepository.createSessionId(token)) {
+                is ApiResult.Success -> {
+                    val result = apiResponse.response
+                    _sessionId.value = ResultOf.Success(result.body()!!.sessionId)
+                }
+                is ApiResult.Error -> {
+                    _sessionId.value = ResultOf.Error(Exception("Hata"))
+                }
             }
         }
     }
