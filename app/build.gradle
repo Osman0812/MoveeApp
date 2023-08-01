@@ -4,6 +4,11 @@ plugins {
     id 'kotlin-kapt'
     id("com.google.dagger.hilt.android")
 }
+def localProps = new Properties()
+def localPropsFile = rootProject.file("local.properties")
+if (localPropsFile.exists()) {
+    localProps.load(new FileInputStream(localPropsFile))
+}
 android {
     namespace 'com.example.myapplication'
     compileSdk 34
@@ -13,7 +18,7 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
-        buildConfigField "String", "TMDB_API_KEY", "\"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmMmY0YmNkNTI1YWM5Y2I5ZWY1NWZiMjY5N2NmYzM5YiIsInN1YiI6IjY0YjRmNmE0Nzg1NzBlMDBhZDRjNTkwOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.GUpZ0k36wGv1895h_LgX47qEREGXEDNoM4hEuByCUmk\""
+        buildConfigField "String", "TMDB_API_KEY", "\"" + localProps.getProperty("tmdb_api_key") + "\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
