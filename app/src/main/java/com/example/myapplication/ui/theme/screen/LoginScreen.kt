@@ -18,6 +18,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,7 +42,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavHostController
 import com.example.myapplication.R
 import com.example.myapplication.data.remote.model.ValidationRequest
@@ -49,7 +49,7 @@ import com.example.myapplication.navigation.Screen
 import com.example.myapplication.util.extension.bottomBorder
 import com.example.myapplication.ui.theme.theme.bottomViewColor
 import com.example.myapplication.ui.theme.theme.vibrantBlue
-import com.example.myapplication.util.extension.DataStore
+import com.example.myapplication.data.datastore.SessionManagerDataStore
 import com.example.myapplication.util.extension.ResultOf
 import com.example.myapplication.viewmodel.AuthViewModel
 
@@ -223,21 +223,37 @@ private fun LoginButton(
     Button(
         onClick = {
             val user = ValidationRequest(userName, password)
+            isLoading = true
             authViewModel.performValidation(user)
         },
         colors = ButtonDefaults.buttonColors(Color.White),
         modifier = Modifier.fillMaxWidth(),
         shape = RectangleShape,
     ) {
-        Text(
-            text = stringResource(id = R.string.login),
-            color = vibrantBlue,
-            fontSize = 16.sp,
-            textAlign = TextAlign.Center,
-            style = TextStyle(
-                fontWeight = FontWeight.Bold
+        if (isLoading) {
+            LoadingIndicator()
+        } else {
+            Text(
+                text = stringResource(id = R.string.login),
+                color = vibrantBlue,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center,
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold
+                )
             )
-        )
+        }
+    }
+}
+
+@Composable
+private fun LoadingIndicator() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator()
     }
 }
 
@@ -276,10 +292,9 @@ private fun navigationToMainScreen(navHostController: NavHostController) {
 }
 
 private suspend fun saveSessionId(context: Context, sessionId: String) {
-    val store = DataStore()
-    store.writeToDataStore(context,sessionId)
+    val store = SessionManagerDataStore()
+    store.writeToDataStore(context, sessionId)
 }
-
 
 
 

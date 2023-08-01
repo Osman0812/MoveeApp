@@ -47,7 +47,7 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
             }
         }
     }
-    fun getSessionId() {
+    private fun getSessionId() {
         viewModelScope.launch {
             val token = ValidationCreateRequest(requestToken)
             when (val apiResponse = authRepository.createSessionId(token)) {

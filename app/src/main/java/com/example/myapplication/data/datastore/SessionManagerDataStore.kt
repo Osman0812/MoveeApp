@@ -1,7 +1,6 @@
-package com.example.myapplication.util.extension
+package com.example.myapplication.data.datastore
 
 import android.content.Context
-import android.widget.Toast
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -12,7 +11,7 @@ import kotlinx.coroutines.flow.map
 import java.io.IOException
 
 
-class DataStore() {
+class SessionManagerDataStore() {
     private val Context.dataStore by preferencesDataStore("DataStore")
     object PreferencesKey {
         val SessionIdKey = stringPreferencesKey("mySessionId")
