@@ -1,5 +1,6 @@
 package com.example.myapplication.ui.screen.login
 
+import androidx.compose.runtime.State
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,14 +13,16 @@ import com.example.myapplication.util.extension.ResultOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(private val authRepository: AuthRepository) : ViewModel() {
     var requestToken = ""
-    private val _sessionId = MutableLiveData<ResultOf<Unit>>()
-    val sessionId: LiveData<ResultOf<Unit>> = _sessionId
+    private val _sessionId = MutableStateFlow<ResultOf<Unit>>(ResultOf.Initial)
+    val sessionId: StateFlow<ResultOf<Unit>> = _sessionId
     fun createRequestToken(): Deferred<Unit> = viewModelScope.async {
         when (val result = authRepository.createRequestToken()) {
             is ApiResult.Success -> {

@@ -26,6 +26,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -226,11 +227,11 @@ private fun LoginButton(
     password: String,
     navHostController: NavHostController
 ) {
-    val validation by authViewModel.sessionId.observeAsState(initial = ResultOf.Initial)
+    val validation = authViewModel.sessionId.collectAsState()
     val context = LocalContext.current
     var isLoading by remember { mutableStateOf(false) }
-    LaunchedEffect(validation) {
-        when (validation) {
+    LaunchedEffect(validation.value) {
+        when (validation.value) {
             is ResultOf.Initial -> {
                 isLoading = false
             }
