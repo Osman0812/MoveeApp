@@ -2,12 +2,7 @@ package com.example.myapplication.ui.theme.screen
 
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -49,9 +44,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
-import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.data.remote.model.ValidationRequest
 import com.example.myapplication.navigation.Screen
@@ -59,6 +52,7 @@ import com.example.myapplication.util.extension.bottomBorder
 import com.example.myapplication.ui.theme.theme.bottomViewColor
 import com.example.myapplication.ui.theme.theme.vibrantBlue
 import com.example.myapplication.data.datastore.SessionManagerDataStore
+import com.example.myapplication.util.extension.Constants
 import com.example.myapplication.util.extension.ResultOf
 import com.example.myapplication.viewmodel.AuthViewModel
 
@@ -190,13 +184,11 @@ private fun passwordText(): String {
 
 @Composable
 private fun ForgotPasswordText(navHostController: NavHostController) {
-    val FORGOT_PASSWORD_URL = "https%3A%2F%2Fwww.themoviedb.org%2Freset-password"
-
     ClickableText(
         modifier = Modifier.fillMaxWidth(),
         text = AnnotatedString(stringResource(id = R.string.forgot_password)),
         onClick = {
-            navHostController.navigate("${Screen.WebViewScreen.route}/$FORGOT_PASSWORD_URL")
+            navHostController.navigate("${Screen.WebViewScreen.route}/${Constants.FORGOT_PASSWORD_URL}")
         },
         style = TextStyle(
             color = Color.White,
@@ -278,7 +270,6 @@ private fun LoadingIndicator() {
 
 @Composable
 private fun BottomView(navHostController: NavHostController) {
-    val REGISTER_URL = "https%3A%2F%2Fwww.themoviedb.org%2Fsignup"
     Row(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.Center,
@@ -299,7 +290,7 @@ private fun BottomView(navHostController: NavHostController) {
         ClickableText(
             text = AnnotatedString(stringResource(id = R.string.register_now)),
             onClick = {
-                navHostController.navigate("${Screen.WebViewScreen.route}/$REGISTER_URL")
+                navHostController.navigate("${Screen.WebViewScreen.route}/${Constants.REGISTER_URL}")
             },
             style = TextStyle(
                 color = Color.White,
