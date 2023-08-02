@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.theme.screen
+package com.example.myapplication.ui.screen.splash
 
 
 import android.view.animation.OvershootInterpolator
@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.myapplication.R
-import com.example.myapplication.navigation.Screen
+import com.example.myapplication.ui.Screen
 import kotlinx.coroutines.delay
 
 @Composable

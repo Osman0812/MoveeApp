@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.theme.screen
+package com.example.myapplication.ui.screen.login
 
 
 import android.content.Context
@@ -52,16 +52,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.myapplication.R
 import com.example.myapplication.data.remote.model.ValidationRequest
-import com.example.myapplication.navigation.Screen
-import com.example.myapplication.ui.theme.theme.bottomViewColor
-import com.example.myapplication.ui.theme.theme.vibrantBlue
+import com.example.myapplication.ui.Screen
+import com.example.myapplication.ui.theme.bottomViewColor
+import com.example.myapplication.ui.theme.vibrantBlue
 import com.example.myapplication.data.datastore.SessionManagerDataStore
 import com.example.myapplication.util.extension.Constants
 import com.example.myapplication.util.extension.ResultOf
-import com.example.myapplication.viewmodel.AuthViewModel
 
 @Composable
-fun LoginScreen(authViewModel: AuthViewModel, navHostController: NavHostController) {
+fun LoginScreen(authViewModel: LoginViewModel, navHostController: NavHostController) {
     LoginScreenBackground()
     Column(
         modifier = Modifier
@@ -222,7 +221,7 @@ private fun ForgotPasswordText(navHostController: NavHostController) {
 
 @Composable
 private fun LoginButton(
-    authViewModel: AuthViewModel,
+    authViewModel: LoginViewModel,
     userName: String,
     password: String,
     navHostController: NavHostController

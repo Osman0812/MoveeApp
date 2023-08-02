@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.theme.screen
+package com.example.myapplication.ui.screen.webview
 
 import android.view.ViewGroup
 import android.webkit.WebView
