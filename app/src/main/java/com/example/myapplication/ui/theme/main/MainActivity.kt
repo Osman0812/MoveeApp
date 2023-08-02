@@ -12,6 +12,7 @@ import com.example.myapplication.ui.theme.theme.MyApplicationTheme
 import com.example.myapplication.ui.theme.screen.LoginScreen
 import com.example.myapplication.ui.theme.screen.MainScreen
 import com.example.myapplication.ui.theme.screen.SplashScreen
+import com.example.myapplication.ui.theme.screen.WebViewScreen
 import com.example.myapplication.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -35,6 +36,10 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(Screen.MainScreen.route) {
                         MainScreen()
+                    }
+                    composable("${Screen.WebViewScreen.route}/{url}") {backStackEntry ->
+                        val url = backStackEntry.arguments?.getString("url") ?: ""
+                        WebViewScreen(url = url)
                     }
                 }
             }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,6 +36,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -50,6 +52,7 @@ import com.example.myapplication.util.extension.bottomBorder
 import com.example.myapplication.ui.theme.theme.bottomViewColor
 import com.example.myapplication.ui.theme.theme.vibrantBlue
 import com.example.myapplication.data.datastore.SessionManagerDataStore
+import com.example.myapplication.util.extension.Constants
 import com.example.myapplication.util.extension.ResultOf
 import com.example.myapplication.viewmodel.AuthViewModel
 
@@ -70,11 +73,11 @@ fun LoginScreen(authViewModel: AuthViewModel, navHostController: NavHostControll
         Spacer(modifier = Modifier.padding(15.dp))
         val password = passwordText()
         Spacer(modifier = Modifier.padding(5.dp))
-        ForgotPasswordText()
+        ForgotPasswordText(navHostController)
         Spacer(modifier = Modifier.padding(40.dp))
         LoginButton(authViewModel, userName, password, navHostController)
         Spacer(modifier = Modifier.padding(bottom = 25.dp))
-        BottomView()
+        BottomView(navHostController)
     }
 }
 
@@ -180,13 +183,18 @@ private fun passwordText(): String {
 }
 
 @Composable
-private fun ForgotPasswordText() {
-    Text(
-        text = stringResource(id = R.string.forgot_password),
-        style = TextStyle(Color.White),
-        fontSize = 12.sp,
-        modifier = Modifier.fillMaxSize(),
-        textAlign = TextAlign.End
+private fun ForgotPasswordText(navHostController: NavHostController) {
+    ClickableText(
+        modifier = Modifier.fillMaxWidth(),
+        text = AnnotatedString(stringResource(id = R.string.forgot_password)),
+        onClick = {
+            navHostController.navigate("${Screen.WebViewScreen.route}/${Constants.FORGOT_PASSWORD_URL}")
+        },
+        style = TextStyle(
+            color = Color.White,
+            fontSize = 12.sp,
+            textAlign = TextAlign.End
+        )
     )
 }
 
@@ -205,15 +213,18 @@ private fun LoginButton(
             is ResultOf.Initial -> {
                 isLoading = false
             }
+
             is ResultOf.Loading -> {
                 isLoading = true
             }
+
             is ResultOf.Success -> {
                 println(validation.toString())
                 saveSessionId(context, validation.toString())
                 navigationToMainScreen(navHostController)
                 isLoading = false
             }
+
             is ResultOf.Error -> {
                 Toast.makeText(context, "Failed!", Toast.LENGTH_LONG).show()
                 isLoading = false
@@ -258,7 +269,7 @@ private fun LoadingIndicator() {
 }
 
 @Composable
-private fun BottomView() {
+private fun BottomView(navHostController: NavHostController) {
     Row(
         verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.Center,
@@ -276,12 +287,15 @@ private fun BottomView() {
             )
         )
         Spacer(modifier = Modifier.padding(2.dp))
-        Text(
-            text = stringResource(id = R.string.register_now),
-            fontSize = 12.sp,
-            textAlign = TextAlign.Center,
+        ClickableText(
+            text = AnnotatedString(stringResource(id = R.string.register_now)),
+            onClick = {
+                navHostController.navigate("${Screen.WebViewScreen.route}/${Constants.REGISTER_URL}")
+            },
             style = TextStyle(
-                color = Color.White
+                color = Color.White,
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center
             )
         )
     }
