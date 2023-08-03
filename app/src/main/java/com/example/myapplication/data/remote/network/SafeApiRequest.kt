@@ -1,6 +1,6 @@
-package com.example.myapplication.data.remote
+package com.example.myapplication.data.remote.network
 
-import com.example.myapplication.util.extension.ApiResult
+import com.example.myapplication.util.state.ApiResult
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Response

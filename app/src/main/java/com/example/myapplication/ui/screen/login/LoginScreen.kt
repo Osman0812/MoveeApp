@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -52,13 +51,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.myapplication.R
-import com.example.myapplication.data.remote.model.ValidationRequest
+import com.example.myapplication.data.model.ValidationRequest
 import com.example.myapplication.ui.Screen
 import com.example.myapplication.ui.theme.bottomViewColor
 import com.example.myapplication.ui.theme.vibrantBlue
 import com.example.myapplication.data.datastore.SessionManagerDataStore
-import com.example.myapplication.util.extension.Constants
-import com.example.myapplication.util.extension.ResultOf
+import com.example.myapplication.util.Constants
+import com.example.myapplication.util.state.ResultOf
 
 @Composable
 fun LoginScreen(authViewModel: LoginViewModel, navHostController: NavHostController) {
@@ -336,7 +335,7 @@ private fun IndicatorLine(modifier: Modifier = Modifier) {
 }
 
 private fun navigationToMainScreen(navHostController: NavHostController) {
-    navHostController.navigate(Screen.MainScreen.route)
+    navHostController.navigate(Screen.MoviesHomeScreen.route)
 }
 
 private suspend fun saveSessionId(context: Context, sessionId: String) {

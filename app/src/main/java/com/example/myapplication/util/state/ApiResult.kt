@@ -1,4 +1,4 @@
-package com.example.myapplication.util.extension
+package com.example.myapplication.util.state
 
 import retrofit2.Response
 

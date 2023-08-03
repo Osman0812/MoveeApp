@@ -1,11 +1,13 @@
 <resources>
     <string name="app_name">My Application</string>
-    <string name="ic_we">Biz</string>
-    <string name="ic_movie">Film</string>
+    <string name="ic_we">We</string>
+    <string name="ic_movie">Movie</string>
     <string name="email">Email</string>
-    <string name="password">Şifre</string>
-    <string name="forgot_password">Şifremi Unuttum?</string>
-    <string name="login">Giriş</string>
-    <string name="dont_have_an_account">Henüz bir hesabınız yok mu?</string>
-    <string name="register_now">Şimdi Kaydolun</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="login">Login</string>
+    <string name="dont_have_an_account">Don\'t have an account?</string>
+    <string name="register_now">Register Now</string>
+    <string name="movieshome_movies_popular">Popular Movies</string>
+    <string name="movieshome_movies_title">Movies</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.myapplication.util.extension
+package com.example.myapplication.util.state
 
 sealed class ResultOf<out T> {
     object Initial : ResultOf<Nothing>()

@@ -2,17 +2,17 @@ package com.example.myapplication.data.repository
 
 
 
-import com.example.myapplication.data.remote.SafeApiRequest
-import com.example.myapplication.data.remote.model.RequestTokenResponse
-import com.example.myapplication.data.remote.model.SessionResponse
-import com.example.myapplication.data.remote.model.ValidationCreateRequest
-import com.example.myapplication.data.remote.model.ValidationRequest
-import com.example.myapplication.data.remote.service.TMDbApi
-import com.example.myapplication.util.extension.ApiResult
+import com.example.myapplication.data.remote.network.SafeApiRequest
+import com.example.myapplication.data.model.RequestTokenResponse
+import com.example.myapplication.data.model.SessionResponse
+import com.example.myapplication.data.model.ValidationCreateRequest
+import com.example.myapplication.data.model.ValidationRequest
+import com.example.myapplication.data.remote.service.AuthService
+import com.example.myapplication.util.state.ApiResult
 import javax.inject.Inject
 
 
-class AuthRepository @Inject constructor(private val tmdbApi: TMDbApi) : SafeApiRequest() {
+class AuthRepository @Inject constructor(private val tmdbApi: AuthService) : SafeApiRequest() {
     suspend fun createRequestToken(): ApiResult<RequestTokenResponse> {
         return apiRequest { tmdbApi.createRequestToken() }
     }
