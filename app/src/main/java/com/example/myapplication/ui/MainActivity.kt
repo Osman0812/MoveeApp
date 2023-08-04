@@ -13,6 +13,7 @@ import com.example.myapplication.ui.screen.login.LoginScreen
 import com.example.myapplication.ui.screen.splash.SplashScreen
 import com.example.myapplication.ui.screen.webview.WebViewScreen
 import com.example.myapplication.ui.screen.login.LoginViewModel
+import com.example.myapplication.ui.screen.moviesdetail.MoviesDetailScreen
 import com.example.myapplication.ui.screen.movieshome.MoviesHomeScreen
 import com.example.myapplication.ui.screen.movieshome.MoviesHomeScreenViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +29,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController,
-                    startDestination = Screen.MoviesHomeScreen.route
+                    startDestination = Screen.MoviesDetailScreen.route
                 ) {
                     composable(Screen.SplashScreen.route) {
                         SplashScreen(navHostController = navController)
@@ -42,6 +43,9 @@ class MainActivity : ComponentActivity() {
                     }
                     composable(Screen.MoviesHomeScreen.route) {
                         MoviesHomeScreen(moviesHomeScreenViewModel)
+                    }
+                    composable(Screen.MoviesDetailScreen.route) {
+                        MoviesDetailScreen()
                     }
                 }
             }

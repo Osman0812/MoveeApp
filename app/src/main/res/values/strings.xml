@@ -8,6 +8,9 @@
     <string name="login">Login</string>
     <string name="dont_have_an_account">Don\'t have an account?</string>
     <string name="register_now">Register Now</string>
-    <string name="movieshome_movies_popular">Popular Movies</string>
-    <string name="movieshome_movies_title">Movies</string>
+    <string name="movies_home_screen_movies_popular">Popular Movies</string>
+    <string name="movies_home_screen_movies_title">Movies</string>
+    <string name="movies_detail_screen_director">Director:</string>
+    <string name="movies_detail_screen_writers">Writers:</string>
+    <string name="movies_detail_screen_stars">Stars:</string>
 </resources>

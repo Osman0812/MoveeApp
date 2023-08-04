@@ -8,6 +8,9 @@
     <string name="login">Giriş</string>
     <string name="dont_have_an_account">Henüz bir hesabınız yok mu?</string>
     <string name="register_now">Şimdi Kaydolun</string>
-    <string name="movieshome_movies_popular">Popüler Filmler</string>
-    <string name="movieshome_movies_title">Filmler</string>
+    <string name="movies_home_screen_movies_popular">Popüler Filmler</string>
+    <string name="movies_home_screen_movies_title">Filmler</string>
+    <string name="movies_detail_screen_director">Yönetmen:</string>
+    <string name="movies_detail_screen_writers">Yazarlar:</string>
+    <string name="movies_detail_screen_stars">Yıldızlar:</string>
 </resources>

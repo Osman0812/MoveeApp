@@ -56,6 +56,7 @@ import com.example.myapplication.ui.Screen
 import com.example.myapplication.ui.theme.bottomViewColor
 import com.example.myapplication.ui.theme.vibrantBlue
 import com.example.myapplication.data.datastore.SessionManagerDataStore
+import com.example.myapplication.ui.components.IndicatorLine
 import com.example.myapplication.util.Constants
 import com.example.myapplication.util.state.ResultOf
 
@@ -315,21 +316,6 @@ private fun BottomView(navHostController: NavHostController) {
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center
             )
-        )
-    }
-}
-
-@Composable
-private fun IndicatorLine(modifier: Modifier = Modifier) {
-    Canvas(
-        modifier = modifier
-    ) {
-        drawLine(
-            color = Color(0x4cabb4bd),
-            start = Offset(0f, 0f),
-            end = Offset(size.width, 0f),
-            strokeWidth = 1.dp.toPx(),
-            cap = StrokeCap.Butt
         )
     }
 }

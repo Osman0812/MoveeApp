@@ -50,6 +50,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.myapplication.R
 import com.example.myapplication.data.model.genresmodel.Genre
+import com.example.myapplication.ui.components.IndicatorLine
 import com.example.myapplication.util.state.DataState
 
 @Composable
@@ -73,7 +74,7 @@ fun MoviesHomeScreen(viewModel: MoviesHomeScreenViewModel) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.movieshome_movies_title),
+            text = stringResource(id = R.string.movies_home_screen_movies_title),
             fontWeight = FontWeight.Bold,
             fontSize = 34.sp,
             color = Color.White
@@ -249,7 +250,7 @@ private fun PopularMovies(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.movieshome_movies_popular),
+            text = stringResource(id = R.string.movies_home_screen_movies_popular),
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
         )
@@ -389,21 +390,6 @@ private fun MovieRate(modifier: Modifier = Modifier, fontSize: Int, rate: String
         )
     }
 }
-
-@Composable
-private fun IndicatorLine(modifier: Modifier = Modifier) {
-    Canvas(
-        modifier = modifier
-    ) {
-        drawLine(
-            color = Color(0xffd1d1d6),
-            start = Offset(0f, 0f),
-            end = Offset(size.width, 0f),
-            strokeWidth = 2f
-        )
-    }
-}
-
 private fun getMovieGenre(movieGenreList: List<Genre>, allGenreList: List<Int>): String {
     val matchingGenres = movieGenreList.filter { it.id in allGenreList }
     return matchingGenres.joinToString(separator = ", ") { it.name }

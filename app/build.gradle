@@ -90,6 +90,10 @@ dependencies {
     implementation "androidx.paging:paging-runtime:3.2.0"
     implementation "androidx.paging:paging-compose:3.2.0"
 
+    // SystemUIController
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.30.0"
+
+
 
 }
 kapt {
