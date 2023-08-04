@@ -1,8 +1,8 @@
 package com.example.myapplication.ui.screen.movieshome
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,8 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -46,15 +44,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.myapplication.R
 import com.example.myapplication.data.model.genresmodel.Genre
+import com.example.myapplication.ui.Screen
 import com.example.myapplication.ui.components.IndicatorLine
+import com.example.myapplication.util.Constants
 import com.example.myapplication.util.state.DataState
 
 @Composable
-fun MoviesHomeScreen(viewModel: MoviesHomeScreenViewModel) {
+fun MoviesHomeScreen(viewModel: MoviesHomeScreenViewModel, navHostController: NavHostController) {
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp
@@ -81,13 +83,15 @@ fun MoviesHomeScreen(viewModel: MoviesHomeScreenViewModel) {
         )
         PlayingMoviesList(
             viewModel = viewModel,
-            genres = genres
+            genres = genres,
+            navHostController = navHostController
         )
 
 
         PopularMovies(
             modifier = Modifier
                 .height((screenHeight / 2).dp),
+            navHostController = navHostController,
             viewModel = viewModel,
             genres = genres
         )
@@ -117,7 +121,8 @@ private fun Background(modifier: Modifier = Modifier) {
 private fun PlayingMoviesList(
     modifier: Modifier = Modifier,
     viewModel: MoviesHomeScreenViewModel,
-    genres: State<DataState<List<Genre>>>
+    genres: State<DataState<List<Genre>>>,
+    navHostController: NavHostController
 ) {
     val lazyRowState = rememberLazyListState()
     val scrollIndex = remember { derivedStateOf { lazyRowState.firstVisibleItemIndex } }
@@ -165,7 +170,11 @@ private fun PlayingMoviesList(
                 modifier = Modifier
                     .width((screenWith * 0.7).dp)
                     .height(screenWith.dp)
-                    .clip(shape = RoundedCornerShape(15.dp)),
+                    .clip(shape = RoundedCornerShape(15.dp))
+                    .clickable {
+                        val movieId = movies[movie]!!.id
+                        navHostController.navigate("${Screen.MovieDetailScreen.route}/$movieId")
+                    },
                 imagePath = movies[movie]!!.posterPath
             )
         }
@@ -182,7 +191,7 @@ private fun PlayingMoviesList(
 
 @Composable
 private fun SingleMovieImage(modifier: Modifier = Modifier, imagePath: String) {
-    val imageUrl = "https://image.tmdb.org/t/p/original/$imagePath"
+    val imageUrl = Constants.IMAGE_URL + imagePath
     AsyncImage(
         modifier = modifier,
         model = imageUrl,
@@ -239,11 +248,13 @@ private fun SingleMovieInfo(
 @Composable
 private fun PopularMovies(
     modifier: Modifier = Modifier,
+    navHostController: NavHostController,
     viewModel: MoviesHomeScreenViewModel,
     genres: State<DataState<List<Genre>>>
 ) {
     val popularMovies = viewModel.moviesPopularFlow.collectAsLazyPagingItems()
     val movieGenre = remember { mutableStateOf("") }
+    val movieId = remember { mutableStateOf("") }
 
     Column(
         modifier = modifier,
@@ -261,9 +272,7 @@ private fun PopularMovies(
             verticalArrangement = Arrangement.spacedBy(15.dp),
             contentPadding = PaddingValues(bottom = 10.dp)
         ) {
-
             items(popularMovies.itemCount) { movie ->
-
                 when (genres.value) {
                     is DataState.Loading -> {}
                     is DataState.Success -> {
@@ -279,11 +288,13 @@ private fun PopularMovies(
 
                 SinglePopularMovie(
                     modifier = Modifier,
+                    navHostController=navHostController,
                     imagePath = popularMovies[movie]!!.posterPath,
                     movieName = popularMovies[movie]!!.title,
                     genre = movieGenre.value,
                     voteAverage = popularMovies[movie]!!.voteAverage.toString(),
                     date = popularMovies[movie]!!.releaseDate,
+                    movieId = popularMovies[movie]!!.id.toString()
                 )
             }
         }
@@ -294,13 +305,19 @@ private fun PopularMovies(
 @Composable
 private fun SinglePopularMovie(
     modifier: Modifier = Modifier,
+    navHostController: NavHostController,
     imagePath: String,
     movieName: String,
     genre: String,
     date: String,
-    voteAverage: String
+    voteAverage: String,
+    movieId: String
 ) {
     Surface(
+        modifier = modifier
+            .clickable {
+                navHostController.navigate("${Screen.MovieDetailScreen.route}/$movieId")
+            },
         shadowElevation = 5.dp,
         shape = RoundedCornerShape(10.dp)
     ) {
@@ -398,5 +415,5 @@ private fun getMovieGenre(movieGenreList: List<Genre>, allGenreList: List<Int>):
 @Preview
 @Composable
 fun MoviesHomeScreenPreview() {
-    MoviesHomeScreen(viewModel())
+    MoviesHomeScreen(viewModel(), rememberNavController())
 }

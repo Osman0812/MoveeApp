@@ -6,6 +6,6 @@ sealed class Screen(val route: String) {
     object WebViewScreen : Screen(route = "web_view_screen")
 
     object MoviesHomeScreen : Screen(route = "moviesHome")
-    object MoviesDetailScreen : Screen(route = "moviesDetail")
+    object MovieDetailScreen : Screen(route = "movieDetail")
 
 }

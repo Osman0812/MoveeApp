@@ -2,8 +2,8 @@ package com.example.myapplication.ui.screen.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.data.model.ValidationCreateRequest
-import com.example.myapplication.data.model.ValidationRequest
+import com.example.myapplication.data.model.authmodel.ValidationCreateRequest
+import com.example.myapplication.data.model.authmodel.ValidationRequest
 import com.example.myapplication.data.repository.AuthRepository
 import com.example.myapplication.util.state.ApiResult
 import com.example.myapplication.util.state.ResultOf
