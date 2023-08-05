@@ -221,21 +221,30 @@ private fun MovieSummary(
                     val writerTag = stringResource(id = R.string.movies_detail_screen_writers)
                     val starTag = stringResource(id = R.string.movies_detail_screen_stars)
 
-                    val castList = (movieCredits.value as DataState.Success).data.cast
                     val crewList = (movieCredits.value as DataState.Success).data.crew
+                    val castList = (movieCredits.value as DataState.Success).data.cast
+
 
                     val director = crewList
                         .filter { it.job == "Director" }
                         .joinToString { it.name }
 
-
                     val authors = crewList
                         .filter { it.job == "Author" || it.job == "Writer"}
                         .joinToString{ it.name }
 
+                    val stars = castList
+                        .filter {it.order == 0 || it.order == 1}
+                        .joinToString { it.originalName }
+
+
                     MovieSummaryExtension(tagName = directorTag, name = director)
+
+                    if(authors.isNotEmpty()){
                     MovieSummaryExtension(tagName = writerTag, name = authors)
-                    MovieSummaryExtension(tagName = starTag, name = "Any Star")
+                    }
+
+                    MovieSummaryExtension(tagName = starTag, name = stars)
                 }
             }
 

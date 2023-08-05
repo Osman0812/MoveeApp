@@ -12,5 +12,5 @@
     <string name="movies_home_screen_movies_title">Filmler</string>
     <string name="movies_detail_screen_director">Yönetmen:</string>
     <string name="movies_detail_screen_writers">Yazarlar:</string>
-    <string name="movies_detail_screen_stars">Yıldızlar:</string>
+    <string name="movies_detail_screen_stars">Başroller:</string>
 </resources>
