@@ -65,7 +65,7 @@ fun MovieDetailScreen(movieId: Int) {
             Column(
                 modifier = Modifier
                     .verticalScroll(scrollState)
-                    .padding(bottom=10.dp)
+                    .padding(bottom = 10.dp)
             ) {
                 MovieCover(
                     modifier = Modifier
@@ -230,18 +230,18 @@ private fun MovieSummary(
                         .joinToString { it.name }
 
                     val authors = crewList
-                        .filter { it.job == "Author" || it.job == "Writer"}
-                        .joinToString{ it.name }
+                        .filter { it.job == "Author" || it.job == "Writer" }
+                        .joinToString { it.name }
 
                     val stars = castList
-                        .filter {it.order == 0 || it.order == 1}
+                        .filter { it.order == 0 || it.order == 1 }
                         .joinToString { it.originalName }
 
 
                     MovieSummaryExtension(tagName = directorTag, name = director)
 
-                    if(authors.isNotEmpty()){
-                    MovieSummaryExtension(tagName = writerTag, name = authors)
+                    if (authors.isNotEmpty()) {
+                        MovieSummaryExtension(tagName = writerTag, name = authors)
                     }
 
                     MovieSummaryExtension(tagName = starTag, name = stars)

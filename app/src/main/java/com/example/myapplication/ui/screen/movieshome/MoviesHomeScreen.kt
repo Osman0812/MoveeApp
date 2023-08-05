@@ -128,7 +128,6 @@ private fun PlayingMoviesList(
     val scrollIndex = remember { derivedStateOf { lazyRowState.firstVisibleItemIndex } }
     val movies = viewModel.moviesPlayNowFlow.collectAsLazyPagingItems()
     val currentTitle = remember { mutableStateOf("") }
-    val currentOverview = remember { mutableStateOf("") }
     val currentAverage = remember { mutableStateOf("") }
     val currentGenres = remember { mutableStateOf("") }
     val currentFirstItem = lazyRowState.firstVisibleItemIndex
@@ -138,9 +137,7 @@ private fun PlayingMoviesList(
 
     if (movies.itemCount > 0) {
         currentTitle.value = movies.itemSnapshotList.items[scrollIndex.value].title
-        currentOverview.value = movies.itemSnapshotList.items[scrollIndex.value].overview
-        currentAverage.value =
-            movies.itemSnapshotList.items[scrollIndex.value].voteAverage.toString()
+        currentAverage.value = movies.itemSnapshotList.items[scrollIndex.value].voteAverage.toString()
 
         LaunchedEffect(currentFirstItem) {
             currentGenres.value = ""
@@ -182,7 +179,6 @@ private fun PlayingMoviesList(
 
     SingleMovieInfo(
         movieName = currentTitle.value,
-        overView = currentOverview.value,
         voteAverage = currentAverage.value,
         genres = currentGenres.value
     )
@@ -205,7 +201,6 @@ private fun SingleMovieImage(modifier: Modifier = Modifier, imagePath: String) {
 private fun SingleMovieInfo(
     modifier: Modifier = Modifier,
     movieName: String,
-    overView: String,
     voteAverage: String,
     genres: String
 ) {
@@ -226,11 +221,6 @@ private fun SingleMovieInfo(
                 .fillMaxWidth(),
             text = movieName,
             style = MaterialTheme.typography.displayLarge
-        )
-        Text(
-            text = overView,
-            fontSize = 15.sp
-
         )
         Text(
             text = genres,
@@ -254,7 +244,6 @@ private fun PopularMovies(
 ) {
     val popularMovies = viewModel.moviesPopularFlow.collectAsLazyPagingItems()
     val movieGenre = remember { mutableStateOf("") }
-    val movieId = remember { mutableStateOf("") }
 
     Column(
         modifier = modifier,
