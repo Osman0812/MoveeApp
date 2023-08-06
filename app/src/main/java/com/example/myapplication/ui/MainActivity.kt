@@ -5,17 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.ui.theme.MyApplicationTheme
-import com.example.myapplication.ui.screen.login.LoginScreen
-import com.example.myapplication.ui.screen.splash.SplashScreen
-import com.example.myapplication.ui.screen.webview.WebViewScreen
+import com.example.myapplication.graphs.RootNavGraph
+import com.example.myapplication.ui.screen.home.movieshome.MoviesHomeScreenViewModel
 import com.example.myapplication.ui.screen.login.LoginViewModel
-import com.example.myapplication.ui.screen.moviedetail.MovieDetailScreen
-import com.example.myapplication.ui.screen.movieshome.MoviesHomeScreen
-import com.example.myapplication.ui.screen.movieshome.MoviesHomeScreenViewModel
+import com.example.myapplication.ui.theme.MyApplicationTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,31 +18,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val authViewModel = viewModel<LoginViewModel>()
-            val moviesHomeScreenViewModel : MoviesHomeScreenViewModel by viewModels()
+            val moviesHomeScreenViewModel: MoviesHomeScreenViewModel by viewModels()
             MyApplicationTheme {
-                val navController = rememberNavController()
-                NavHost(
-                    navController = navController,
-                    startDestination = Screen.MoviesHomeScreen.route
-                ) {
-                    composable(Screen.SplashScreen.route) {
-                        SplashScreen(navHostController = navController)
-                    }
-                    composable(Screen.LoginScreen.route) {
-                        LoginScreen(authViewModel, navHostController = navController)
-                    }
-                    composable("${Screen.WebViewScreen.route}/{url}") { backStackEntry ->
-                        val url = backStackEntry.arguments?.getString("url") ?: ""
-                        WebViewScreen(url = url)
-                    }
-                    composable(Screen.MoviesHomeScreen.route) {
-                        MoviesHomeScreen(moviesHomeScreenViewModel, navController)
-                    }
-                    composable("${Screen.MovieDetailScreen.route}/{movie_id}") {backStackEntry ->
-                        val movieId = backStackEntry.arguments?.getString("movie_id")
-                        MovieDetailScreen(movieId = movieId!!.toInt())
-                    }
-                }
+                RootNavGraph(
+                    navController = rememberNavController(),
+                    loginViewModel = authViewModel,
+                    moviesHomeScreenViewModel = moviesHomeScreenViewModel
+                )
             }
         }
     }

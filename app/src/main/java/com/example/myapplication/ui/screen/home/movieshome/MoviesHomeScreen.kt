@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.screen.movieshome
+package com.example.myapplication.ui.screen.home.movieshome
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -50,7 +50,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.myapplication.R
 import com.example.myapplication.data.model.genresmodel.Genre
-import com.example.myapplication.ui.Screen
+import com.example.myapplication.graphs.MoviesScreens
 import com.example.myapplication.ui.components.IndicatorLine
 import com.example.myapplication.util.Constants
 import com.example.myapplication.util.state.DataState
@@ -170,7 +170,7 @@ private fun PlayingMoviesList(
                     .clip(shape = RoundedCornerShape(15.dp))
                     .clickable {
                         val movieId = movies[movie]!!.id
-                        navHostController.navigate("${Screen.MovieDetailScreen.route}/$movieId")
+                        navHostController.navigate("${MoviesScreens.MovieDetailScreen.route}/$movieId")
                     },
                 imagePath = movies[movie]!!.posterPath
             )
@@ -305,7 +305,7 @@ private fun SinglePopularMovie(
     Surface(
         modifier = modifier
             .clickable {
-                navHostController.navigate("${Screen.MovieDetailScreen.route}/$movieId")
+                navHostController.navigate("${MoviesScreens.MovieDetailScreen.route}/$movieId")
             },
         shadowElevation = 5.dp,
         shape = RoundedCornerShape(10.dp)

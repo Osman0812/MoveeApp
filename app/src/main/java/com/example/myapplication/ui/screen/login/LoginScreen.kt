@@ -48,17 +48,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.myapplication.R
+import com.example.myapplication.data.datastore.SessionManagerDataStore
 import com.example.myapplication.data.model.authmodel.ValidationRequest
-import com.example.myapplication.ui.Screen
+import com.example.myapplication.graphs.AuthScreen
+import com.example.myapplication.graphs.Graph
+import com.example.myapplication.ui.components.IndicatorLine
 import com.example.myapplication.ui.theme.bottomViewColor
 import com.example.myapplication.ui.theme.vibrantBlue
-import com.example.myapplication.data.datastore.SessionManagerDataStore
-import com.example.myapplication.ui.components.IndicatorLine
 import com.example.myapplication.util.Constants
 import com.example.myapplication.util.state.ResultOf
 
 @Composable
-fun LoginScreen(authViewModel: LoginViewModel, navHostController: NavHostController) {
+fun LoginScreen(
+    authViewModel: LoginViewModel,
+    navHostController: NavHostController,
+) {
     LoginScreenBackground()
     Column(
         modifier = Modifier
@@ -207,7 +211,9 @@ private fun ForgotPasswordText(navHostController: NavHostController) {
         modifier = Modifier.fillMaxWidth(),
         text = AnnotatedString(stringResource(id = R.string.forgot_password)),
         onClick = {
-            navHostController.navigate("${Screen.WebViewScreen.route}/${Constants.FORGOT_PASSWORD_URL}")
+            navHostController.navigate("${AuthScreen.WebView.route}/${Constants.FORGOT_PASSWORD_URL}")
+
+
         },
         style = TextStyle(
             color = Color.White,
@@ -232,15 +238,18 @@ private fun LoginButton(
             is ResultOf.Initial -> {
                 isLoading = false
             }
+
             is ResultOf.Loading -> {
                 isLoading = true
             }
+
             is ResultOf.Success -> {
                 println(validation.toString())
                 saveSessionId(context, validation.toString())
                 navigationToMainScreen(navHostController)
                 isLoading = false
             }
+
             is ResultOf.Error -> {
                 Toast.makeText(context, "Failed!", Toast.LENGTH_LONG).show()
                 isLoading = false
@@ -306,7 +315,7 @@ private fun BottomView(navHostController: NavHostController) {
         ClickableText(
             text = AnnotatedString(stringResource(id = R.string.register_now)),
             onClick = {
-                navHostController.navigate("${Screen.WebViewScreen.route}/${Constants.REGISTER_URL}")
+                navHostController.navigate("${AuthScreen.WebView.route}/${Constants.REGISTER_URL}")
             },
             style = TextStyle(
                 color = Color.White,
@@ -318,7 +327,8 @@ private fun BottomView(navHostController: NavHostController) {
 }
 
 private fun navigationToMainScreen(navHostController: NavHostController) {
-    navHostController.navigate(Screen.MoviesHomeScreen.route)
+    navHostController.popBackStack()
+    navHostController.navigate(Graph.HOME)
 }
 
 private suspend fun saveSessionId(context: Context, sessionId: String) {

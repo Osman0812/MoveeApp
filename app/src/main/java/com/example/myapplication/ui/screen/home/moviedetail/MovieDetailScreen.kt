@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.screen.moviedetail
+package com.example.myapplication.ui.screen.home.moviedetail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -217,9 +217,9 @@ private fun MovieSummary(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    val directorTag = stringResource(id = R.string.movies_detail_screen_director)
-                    val writerTag = stringResource(id = R.string.movies_detail_screen_writers)
-                    val starTag = stringResource(id = R.string.movies_detail_screen_stars)
+                    val labelDirector = stringResource(id = R.string.movies_detail_screen_director)
+                    val labelWriter = stringResource(id = R.string.movies_detail_screen_writers)
+                    val labelStar = stringResource(id = R.string.movies_detail_screen_stars)
 
                     val crewList = (movieCredits.value as DataState.Success).data.crew
                     val castList = (movieCredits.value as DataState.Success).data.cast
@@ -238,13 +238,13 @@ private fun MovieSummary(
                         .joinToString { it.originalName }
 
 
-                    MovieSummaryExtension(tagName = directorTag, name = director)
+                    MovieSummaryExtension(labelName = labelDirector, name = director)
 
                     if (authors.isNotEmpty()) {
-                        MovieSummaryExtension(tagName = writerTag, name = authors)
+                        MovieSummaryExtension(labelName = labelWriter, name = authors)
                     }
 
-                    MovieSummaryExtension(tagName = starTag, name = stars)
+                    MovieSummaryExtension(labelName = labelStar, name = stars)
                 }
             }
 
@@ -256,12 +256,12 @@ private fun MovieSummary(
 }
 
 @Composable
-private fun MovieSummaryExtension(modifier: Modifier = Modifier, tagName: String, name: String) {
+private fun MovieSummaryExtension(modifier: Modifier = Modifier, labelName: String, name: String) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Text(
-            text = tagName,
+            text = labelName,
             fontSize = 17.sp
         )
         Text(
