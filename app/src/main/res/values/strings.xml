@@ -13,4 +13,6 @@
     <string name="movies_detail_screen_director">Director:</string>
     <string name="movies_detail_screen_writers">Writers:</string>
     <string name="movies_detail_screen_stars">Stars:</string>
+    <string name="tv_series_title">Tv Series</string>
+    <string name="tv_series_top_rated">Top Rated</string>
 </resources>

@@ -25,12 +25,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.graphs.HomeNavGraph
 import com.example.myapplication.ui.BottomBarScreen
 import com.example.myapplication.ui.screen.home.movieshome.MoviesHomeScreenViewModel
+import com.example.myapplication.ui.screen.tvseries.TvSeriesViewModel
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    tvSeriesViewModel: TvSeriesViewModel,
     moviesHomeScreenViewModel: MoviesHomeScreenViewModel,
     navController: NavHostController = rememberNavController()
 ) {
@@ -44,7 +46,8 @@ fun HomeScreen(
         ) {
         HomeNavGraph(
             navController = navController,
-            moviesHomeScreenViewModel = moviesHomeScreenViewModel
+            moviesHomeScreenViewModel = moviesHomeScreenViewModel,
+            tvSeriesViewModel = tvSeriesViewModel
         )
     }
 }

@@ -13,4 +13,6 @@
     <string name="movies_detail_screen_director">Yönetmen:</string>
     <string name="movies_detail_screen_writers">Yazarlar:</string>
     <string name="movies_detail_screen_stars">Başroller:</string>
+    <string name="tv_series_title">Diziler</string>
+    <string name="tv_series_top_rated">En Çok Oy Alan</string>
 </resources>

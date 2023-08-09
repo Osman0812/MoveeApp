@@ -11,18 +11,21 @@ import com.example.myapplication.ui.screen.login.LoginViewModel
 import com.example.myapplication.ui.screen.home.movieshome.MoviesHomeScreen
 import com.example.myapplication.ui.screen.home.movieshome.MoviesHomeScreenViewModel
 import com.example.myapplication.ui.screen.splash.SplashScreen
+import com.example.myapplication.ui.screen.tvseries.TvSeriesScreen
+import com.example.myapplication.ui.screen.tvseries.TvSeriesViewModel
 import com.example.myapplication.ui.screen.webview.WebViewScreen
 
 @Composable
 fun RootNavGraph(
     navController: NavHostController,
     loginViewModel: LoginViewModel,
-    moviesHomeScreenViewModel: MoviesHomeScreenViewModel
+    moviesHomeScreenViewModel: MoviesHomeScreenViewModel,
+    tvSeriesViewModel: TvSeriesViewModel
 ) {
     NavHost(
         navController = navController,
         route = Graph.ROOT,
-        startDestination = Graph.AUTHENTICATION
+        startDestination = Graph.HOME
     ) {
 
         authNavGraph(
@@ -31,7 +34,7 @@ fun RootNavGraph(
         )
 
         composable(route = Graph.HOME) {
-           HomeScreen(moviesHomeScreenViewModel = moviesHomeScreenViewModel)
+           HomeScreen(tvSeriesViewModel = tvSeriesViewModel,moviesHomeScreenViewModel = moviesHomeScreenViewModel)
         }
     }
 
@@ -42,4 +45,5 @@ object Graph {
     const val AUTHENTICATION = "auth_graph"
     const val HOME = "home_graph"
     const val DETAIL = "details_graph"
+    const val TV = "tv_graph"
 }

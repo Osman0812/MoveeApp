@@ -8,11 +8,15 @@ import com.example.myapplication.ui.BottomBarScreen
 import com.example.myapplication.ui.screen.home.moviedetail.MovieDetailScreen
 import com.example.myapplication.ui.screen.home.movieshome.MoviesHomeScreen
 import com.example.myapplication.ui.screen.home.movieshome.MoviesHomeScreenViewModel
+import com.example.myapplication.ui.screen.tvseries.TvSeriesScreen
+import com.example.myapplication.ui.screen.tvseries.TvSeriesViewModel
+
 
 @Composable
 fun HomeNavGraph(
     navController: NavHostController,
-    moviesHomeScreenViewModel: MoviesHomeScreenViewModel
+    moviesHomeScreenViewModel: MoviesHomeScreenViewModel,
+    tvSeriesViewModel: TvSeriesViewModel
 ) {
     NavHost(
         navController = navController,
@@ -33,7 +37,10 @@ fun HomeNavGraph(
         }
 
         composable(route = BottomBarScreen.TvSeries.route) {
-
+             TvSeriesScreen(
+                 viewModel = tvSeriesViewModel,
+                 navHostController = navController
+                 )
         }
 
     }

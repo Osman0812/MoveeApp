@@ -8,6 +8,11 @@ object Constants {
     const val NOW_PLAYING_PATH = "/3/movie/now_playing"
     const val POPULAR_PATH = "/3/movie/popular"
     const val ALL_GENRES_PATH = "/3/genre/movie/list"
+
     const val SINGLE_MOVIE_PATH = "/3/movie/{movie_id}"
     const val MOVIE_CREDITS_PATH = "/3/movie/{movie_id}/credits"
+
+    const val POPULAR_TV_PATH = "/3/tv/popular"
+    const val TV_GENRES_PATH = "/3/genre/tv/list"
+    const val TOP_RATED_TV_SERIES = "3/tv/top_rated"
 }

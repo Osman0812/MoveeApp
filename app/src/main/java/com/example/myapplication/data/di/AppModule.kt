@@ -5,6 +5,7 @@ import com.example.myapplication.BuildConfig
 import com.example.myapplication.data.remote.network.ApiInterceptor
 import com.example.myapplication.data.remote.service.AuthService
 import com.example.myapplication.data.remote.service.MoviesService
+import com.example.myapplication.data.remote.service.TvSeriesService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,4 +45,9 @@ object AppModule {
     @Singleton
     fun provideMoviesService(retrofit: Retrofit): MoviesService =
         retrofit.create(MoviesService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideTvSeriesService(retrofit: Retrofit): TvSeriesService =
+        retrofit.create(TvSeriesService::class.java)
 }
