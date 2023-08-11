@@ -46,6 +46,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.myapplication.R
 import com.example.myapplication.data.datastore.SessionManagerDataStore
@@ -60,7 +62,7 @@ import com.example.myapplication.util.state.ResultOf
 
 @Composable
 fun LoginScreen(
-    authViewModel: LoginViewModel,
+    viewModel: LoginViewModel = hiltViewModel(),
     navHostController: NavHostController,
 ) {
     LoginScreenBackground()
@@ -80,7 +82,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.padding(5.dp))
         ForgotPasswordText(navHostController)
         Spacer(modifier = Modifier.padding(40.dp))
-        LoginButton(authViewModel, userName, password, navHostController)
+        LoginButton(viewModel, userName, password, navHostController)
         Spacer(modifier = Modifier.padding(bottom = 25.dp))
         BottomView(navHostController)
     }

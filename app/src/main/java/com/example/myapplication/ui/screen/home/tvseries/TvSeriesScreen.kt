@@ -1,7 +1,8 @@
-package com.example.myapplication.ui.screen.tvseries
+package com.example.myapplication.ui.screen.home.tvseries
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +22,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,20 +46,23 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.myapplication.R
 import com.example.myapplication.data.model.genresmodel.Genre
+import com.example.myapplication.graphs.TvsScreens
 import com.example.myapplication.util.state.DataState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TvSeriesScreen(viewModel: TvSeriesViewModel, navHostController: NavHostController) {
+fun TvSeriesScreen(
+    viewModel: TvSeriesViewModel = hiltViewModel(),
+    navHostController: NavHostController) {
     val scrollState = rememberScrollState()
     val config = LocalConfiguration.current
     val genres = viewModel.tvSeriesGenresFlow.collectAsState()
-
 
     Background(
         if (scrollState.value <= scrollState.maxValue / 2) {
@@ -74,7 +77,7 @@ fun TvSeriesScreen(viewModel: TvSeriesViewModel, navHostController: NavHostContr
             .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
 
-    ) {
+        ) {
 
         item {
             Text(
@@ -87,10 +90,10 @@ fun TvSeriesScreen(viewModel: TvSeriesViewModel, navHostController: NavHostContr
 
         }
         item {
-            PopularTvSeriesAdded(viewModel = viewModel, genres = genres)
+            PopularTvSeriesAdded(viewModel = viewModel, genres = genres, navHostController = navHostController)
         }
         stickyHeader {
-            TopRatedTvSeries(viewModel = viewModel, genre = genres)
+            TopRatedTvSeries(viewModel = viewModel, genre = genres, navHostController = navHostController)
         }
     }
 }
@@ -118,7 +121,8 @@ private fun Background(modifier: Modifier) {
 @Composable
 private fun PopularTvSeriesAdded(
     viewModel: TvSeriesViewModel,
-    genres: State<DataState<List<Genre>>>
+    genres: State<DataState<List<Genre>>>,
+    navHostController: NavHostController
 ) {
     val popularTVSeries = viewModel.tvSeriesPopularFlow.collectAsLazyPagingItems()
     val lazyRowState = rememberLazyListState()
@@ -132,7 +136,6 @@ private fun PopularTvSeriesAdded(
     val currentGenres = remember { mutableStateOf("") }
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-
     val itemWidth = with(LocalDensity.current) { screenWidth * 0.7f }
     val itemHeight = with(LocalDensity.current) { screenHeight * 0.8f }
 
@@ -154,15 +157,12 @@ private fun PopularTvSeriesAdded(
                     )
                     println(currentGenres.value)
                 }
-
                 is DataState.Error -> {
                     println("Genres Failed!")
                 }
             }
         }
-
     }
-
     LazyRow(
         contentPadding = PaddingValues(start = 32.dp, end = 16.dp),
         modifier = Modifier
@@ -181,7 +181,11 @@ private fun PopularTvSeriesAdded(
                         .width(itemWidth)
                         .height(itemHeight)
                         //.aspectRatio(2f/3f)
-                        .clip(RoundedCornerShape(8.dp)),
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable {
+                            val seriesId = popularTVSeries[index]!!.id
+                            navHostController.navigate("${TvsScreens.TvSeriesDetailScreen.route}/$seriesId")
+                        },
                     imagePath = series.poster_path,
                 )
             }
@@ -222,7 +226,7 @@ private fun SinglePopularTVSeries(
 }
 
 @Composable
-private fun TopRatedTvSeries(viewModel: TvSeriesViewModel, genre: State<DataState<List<Genre>>>) {
+private fun TopRatedTvSeries(viewModel: TvSeriesViewModel, genre: State<DataState<List<Genre>>>, navHostController: NavHostController) {
 
     val topRatedTvSeries = viewModel.tvSeriesTopRatedFlow.collectAsLazyPagingItems()
     val movieGenre = remember {
@@ -254,14 +258,17 @@ private fun TopRatedTvSeries(viewModel: TvSeriesViewModel, genre: State<DataStat
                     modifier = Modifier
                         .padding(end = 16.dp)
                         .width(45.dp)
-                        .clip(RoundedCornerShape(8.dp)),
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable {
+                            val seriesId = topRatedTvSeries[index]!!.id
+                            navHostController.navigate("${TvsScreens.TvSeriesDetailScreen.route}/$seriesId")
+
+                        },
                     imagePath = series.poster_path
                 )
             }
         }
     }
-
-
 }
 
 private fun getTvSeriesGenre(tvGenreList: List<Genre>, allGenreList: List<Int>): String {
@@ -319,7 +326,7 @@ private fun TvSeriesInfo(
 }
 
 @Composable
-private fun TvSeriesRate(modifier: Modifier = Modifier, fontSize: Int, rate: String) {
+fun TvSeriesRate(modifier: Modifier = Modifier, fontSize: Int, rate: String) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,

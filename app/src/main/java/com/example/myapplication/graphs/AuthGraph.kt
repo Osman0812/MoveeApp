@@ -14,7 +14,6 @@ import com.example.myapplication.ui.screen.webview.WebViewScreen
 
 fun NavGraphBuilder.authNavGraph(
     navHostController: NavHostController,
-    loginViewModel: LoginViewModel,
 ) {
     navigation(
         route = Graph.AUTHENTICATION,
@@ -23,7 +22,6 @@ fun NavGraphBuilder.authNavGraph(
         composable(route = AuthScreen.Login.route) {
             LoginScreen(
                 navHostController = navHostController,
-                authViewModel = loginViewModel
             )
         }
 

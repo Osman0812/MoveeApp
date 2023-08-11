@@ -15,4 +15,5 @@ object Constants {
     const val POPULAR_TV_PATH = "/3/tv/popular"
     const val TV_GENRES_PATH = "/3/genre/tv/list"
     const val TOP_RATED_TV_SERIES = "3/tv/top_rated"
+    const val SINGLE_TV_PATH = "3/tv/{series_id}"
 }

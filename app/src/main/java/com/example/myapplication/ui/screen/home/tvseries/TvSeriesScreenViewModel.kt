@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.screen.tvseries
+package com.example.myapplication.ui.screen.home.tvseries
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

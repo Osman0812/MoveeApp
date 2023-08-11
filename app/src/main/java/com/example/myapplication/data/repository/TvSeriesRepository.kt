@@ -2,6 +2,8 @@ package com.example.myapplication.data.repository
 
 import androidx.paging.PagingData
 import com.example.myapplication.data.model.genresmodel.GenresModel
+import com.example.myapplication.data.model.singlemoviemodel.SingleMovieModel
+import com.example.myapplication.data.model.singletvmodel.TvSeriesDetailModel
 import com.example.myapplication.data.model.tvseriesmodel.Result
 import com.example.myapplication.data.remote.network.SafeApiRequest
 import com.example.myapplication.data.remote.network.pagination.createPager
@@ -22,5 +24,8 @@ class TvSeriesRepository @Inject constructor(private val tvSeriesService: TvSeri
 
     suspend fun getAllGenres(): ApiResult<GenresModel> {
         return apiRequest { tvSeriesService.getTVSeriesGenres() }
+    }
+    suspend fun getSingleTv(seriesId: Int) : ApiResult<TvSeriesDetailModel> {
+        return apiRequest { tvSeriesService.getSingleTVInfo(seriesId) }
     }
 }

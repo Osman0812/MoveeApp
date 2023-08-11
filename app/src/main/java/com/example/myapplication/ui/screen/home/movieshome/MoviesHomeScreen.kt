@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -56,7 +57,9 @@ import com.example.myapplication.util.Constants
 import com.example.myapplication.util.state.DataState
 
 @Composable
-fun MoviesHomeScreen(viewModel: MoviesHomeScreenViewModel, navHostController: NavHostController) {
+fun MoviesHomeScreen(
+    viewModel: MoviesHomeScreenViewModel = hiltViewModel(),
+    navHostController: NavHostController) {
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp

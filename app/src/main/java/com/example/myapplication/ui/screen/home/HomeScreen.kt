@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -25,15 +26,13 @@ import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.graphs.HomeNavGraph
 import com.example.myapplication.ui.BottomBarScreen
 import com.example.myapplication.ui.screen.home.movieshome.MoviesHomeScreenViewModel
-import com.example.myapplication.ui.screen.tvseries.TvSeriesViewModel
+import com.example.myapplication.ui.screen.home.tvseries.TvSeriesViewModel
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    tvSeriesViewModel: TvSeriesViewModel,
-    moviesHomeScreenViewModel: MoviesHomeScreenViewModel,
     navController: NavHostController = rememberNavController()
 ) {
     Scaffold(
@@ -46,9 +45,9 @@ fun HomeScreen(
         ) {
         HomeNavGraph(
             navController = navController,
-            moviesHomeScreenViewModel = moviesHomeScreenViewModel,
-            tvSeriesViewModel = tvSeriesViewModel
-        )
+            )
+
+
     }
 }
 

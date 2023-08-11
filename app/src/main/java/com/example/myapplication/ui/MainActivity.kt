@@ -9,7 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.graphs.RootNavGraph
 import com.example.myapplication.ui.screen.home.movieshome.MoviesHomeScreenViewModel
 import com.example.myapplication.ui.screen.login.LoginViewModel
-import com.example.myapplication.ui.screen.tvseries.TvSeriesViewModel
+import com.example.myapplication.ui.screen.home.tvseries.TvSeriesViewModel
 import com.example.myapplication.ui.theme.MyApplicationTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,15 +18,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val authViewModel = viewModel<LoginViewModel>()
-            val moviesHomeScreenViewModel: MoviesHomeScreenViewModel by viewModels()
-            val tvSeriesViewModel: TvSeriesViewModel by viewModels()
             MyApplicationTheme {
                 RootNavGraph(
-                    navController = rememberNavController(),
-                    loginViewModel = authViewModel,
-                    moviesHomeScreenViewModel = moviesHomeScreenViewModel,
-                    tvSeriesViewModel = tvSeriesViewModel
+                    navController = rememberNavController()
                 )
             }
         }

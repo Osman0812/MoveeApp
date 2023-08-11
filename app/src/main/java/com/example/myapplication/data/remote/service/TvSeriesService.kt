@@ -1,12 +1,15 @@
 package com.example.myapplication.data.remote.service
 
 import com.example.myapplication.data.model.genresmodel.GenresModel
+import com.example.myapplication.data.model.singletvmodel.TvSeriesDetailModel
 import com.example.myapplication.data.model.tvseriesmodel.TvSeriesModel
 import com.example.myapplication.data.remote.service.Constants.POPULAR_TV_PATH
+import com.example.myapplication.data.remote.service.Constants.SINGLE_TV_PATH
 import com.example.myapplication.data.remote.service.Constants.TOP_RATED_TV_SERIES
 import com.example.myapplication.data.remote.service.Constants.TV_GENRES_PATH
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TvSeriesService {
@@ -24,4 +27,8 @@ interface TvSeriesService {
     suspend fun getPopularTVSeries(
         @Query("page") page: Int
     ): Response<TvSeriesModel>
+    @GET(SINGLE_TV_PATH)
+    suspend fun getSingleTVInfo(
+        @Path("series_id") seriesId: Int
+    ): Response<TvSeriesDetailModel>
 }

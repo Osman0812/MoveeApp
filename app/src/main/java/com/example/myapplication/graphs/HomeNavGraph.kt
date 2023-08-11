@@ -1,6 +1,7 @@
 package com.example.myapplication.graphs
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -8,15 +9,14 @@ import com.example.myapplication.ui.BottomBarScreen
 import com.example.myapplication.ui.screen.home.moviedetail.MovieDetailScreen
 import com.example.myapplication.ui.screen.home.movieshome.MoviesHomeScreen
 import com.example.myapplication.ui.screen.home.movieshome.MoviesHomeScreenViewModel
-import com.example.myapplication.ui.screen.tvseries.TvSeriesScreen
-import com.example.myapplication.ui.screen.tvseries.TvSeriesViewModel
+import com.example.myapplication.ui.screen.home.tvseries.TvSeriesScreen
+import com.example.myapplication.ui.screen.home.tvseries.TvSeriesViewModel
+import com.example.myapplication.ui.screen.home.tvdetail.TvDetailScreen
 
 
 @Composable
 fun HomeNavGraph(
-    navController: NavHostController,
-    moviesHomeScreenViewModel: MoviesHomeScreenViewModel,
-    tvSeriesViewModel: TvSeriesViewModel
+    navController: NavHostController
 ) {
     NavHost(
         navController = navController,
@@ -26,7 +26,6 @@ fun HomeNavGraph(
 
         composable(route = BottomBarScreen.Movies.route) {
             MoviesHomeScreen(
-                viewModel = moviesHomeScreenViewModel,
                 navHostController = navController
             )
         }
@@ -37,15 +36,22 @@ fun HomeNavGraph(
         }
 
         composable(route = BottomBarScreen.TvSeries.route) {
-             TvSeriesScreen(
-                 viewModel = tvSeriesViewModel,
-                 navHostController = navController
-                 )
-        }
+            TvSeriesScreen(
+                viewModel = hiltViewModel(),
+                navHostController = navController
+            )
 
+        }
+        composable(route = "${TvsScreens.TvSeriesDetailScreen.route}/{series_id}") { backStackEntry ->
+            val seriesId = backStackEntry.arguments?.getString("series_id")
+            TvDetailScreen(seriesId = seriesId!!.toInt())
+        }
     }
 }
 
 sealed class MoviesScreens(val route: String) {
     object MovieDetailScreen : MoviesScreens(route = "MOVIE_DETAIL")
+}
+sealed class TvsScreens(val route: String) {
+    object TvSeriesDetailScreen : TvsScreens(route = "TV_SERIES_DETAIL")
 }
