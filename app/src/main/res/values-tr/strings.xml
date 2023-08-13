@@ -15,4 +15,6 @@
     <string name="movies_detail_screen_stars">Başroller:</string>
     <string name="tv_series_title">Diziler</string>
     <string name="tv_series_top_rated">En Çok Oy Alan</string>
+    <string name="tv_series_detail_screen_creator">Yaratıcılar:</string>
+
 </resources>

@@ -2,8 +2,6 @@ package com.example.myapplication.ui.screen.home.tvdetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.data.model.moviecreditsmodel.MovieCreditsModel
-import com.example.myapplication.data.model.singlemoviemodel.SingleMovieModel
 import com.example.myapplication.data.model.singletvmodel.TvSeriesDetailModel
 import com.example.myapplication.data.repository.TvSeriesRepository
 import com.example.myapplication.util.state.ApiResult
@@ -16,17 +14,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TvDetailScreenViewModel @Inject constructor(private val tvSeriesRepository: TvSeriesRepository) : ViewModel(){
-
     private val _singleTvInfoFlow =
         MutableStateFlow<DataState<TvSeriesDetailModel>>(DataState.Loading)
     val singleTvInfoFlow: StateFlow<DataState<TvSeriesDetailModel>> get() = _singleTvInfoFlow
-
-
-    fun getSingleMovieInfo(seriesId: Int) {
+    fun getSingleTvInfo(seriesId: Int) {
         viewModelScope.launch {
-            val apiResponse = tvSeriesRepository.getSingleTv(seriesId)
+            when (val apiResponse = tvSeriesRepository.getSingleTv(seriesId)) {
 
-            when (apiResponse) {
                 is ApiResult.Success -> {
                     val movieInfo = apiResponse.response.body()
                     _singleTvInfoFlow.value = DataState.Success(movieInfo!!)
@@ -37,7 +31,6 @@ class TvDetailScreenViewModel @Inject constructor(private val tvSeriesRepository
                         DataState.Error(Exception("Data cannot be fetched!"))
                 }
             }
-
         }
     }
 }
