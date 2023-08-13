@@ -46,9 +46,8 @@ class MovieDetailScreenViewModel @Inject constructor(private val moviesRepositor
 
     fun getMovieCredit(movieId: Int) {
         viewModelScope.launch {
-            val apiResponse = moviesRepository.getMovieCredits(movieId)
 
-            when (apiResponse) {
+            when (val apiResponse = moviesRepository.getMovieCredits(movieId)) {
                 is ApiResult.Success -> {
                     val movieCredits = apiResponse.response.body()
                     _movieCreditsFlow.value = DataState.Success(movieCredits!!)

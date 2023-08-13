@@ -16,5 +16,6 @@
     <string name="tv_series_title">Diziler</string>
     <string name="tv_series_top_rated">En Çok Oy Alan</string>
     <string name="tv_series_detail_screen_creator">Yaratıcılar:</string>
+    <string name="tv_series_cast">Döküm</string>
 
 </resources>

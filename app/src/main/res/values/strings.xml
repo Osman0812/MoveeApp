@@ -16,4 +16,5 @@
     <string name="tv_series_title">Tv Series</string>
     <string name="tv_series_top_rated">Top Rated</string>
     <string name="tv_series_detail_screen_creator">Creators:</string>
+    <string name="tv_series_cast">Cast</string>
 </resources>
