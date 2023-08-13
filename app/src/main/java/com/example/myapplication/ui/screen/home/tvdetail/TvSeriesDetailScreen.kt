@@ -2,6 +2,7 @@ package com.example.myapplication.ui.screen.home.tvdetail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,18 +37,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
 import com.example.myapplication.data.model.singletvmodel.TvSeriesDetailModel
 import com.example.myapplication.data.model.tvseriescreditsmodel.TvSeriesCreditsModel
+import com.example.myapplication.graphs.ActorScreens
+import com.example.myapplication.graphs.MoviesScreens
 import com.example.myapplication.ui.components.IndicatorLine
 import com.example.myapplication.ui.screen.home.tvseries.TvSeriesRate
 import com.example.myapplication.util.Constants
 import com.example.myapplication.util.state.DataState
 
 @Composable
-fun TvDetailScreen(seriesId: Int) {
+fun TvDetailScreen(
+    seriesId: Int,
+    navHostController: NavHostController
+) {
 
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp
@@ -85,7 +93,8 @@ fun TvDetailScreen(seriesId: Int) {
                         .padding(start = 32.dp, end = 32.dp, top = 16.dp),
                     tvInfo = tvInfo,
                     tvCredits = tvCredits,
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    navHostController = navHostController
                 )
 
             }
@@ -210,7 +219,8 @@ private fun TvSeriesSummary(
     modifier: Modifier = Modifier,
     tvInfo: State<DataState<TvSeriesDetailModel>>,
     tvCredits: State<DataState<TvSeriesCreditsModel>>,
-    viewModel: TvDetailScreenViewModel
+    viewModel: TvDetailScreenViewModel,
+    navHostController: NavHostController
 ) {
     val tvOverView = (tvInfo.value as DataState.Success).data.overview
     Column(
@@ -225,6 +235,7 @@ private fun TvSeriesSummary(
             is DataState.Loading -> {
                 CircularProgress()
             }
+
             is DataState.Success -> {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -237,9 +248,10 @@ private fun TvSeriesSummary(
                         it.name
                     }
                     TvSummaryExtension(labelName = labelCreator, name = director)
-                    Actors(tvCredits, viewModel)
+                    Actors(tvCredits, viewModel, navHostController)
                 }
             }
+
             is DataState.Error -> {
                 Text("Data error!")
             }
@@ -290,7 +302,8 @@ fun SeasonsView(
 @Composable
 fun Actors(
     tvCredits: State<DataState<TvSeriesCreditsModel>>,
-    viewModel: TvDetailScreenViewModel
+    viewModel: TvDetailScreenViewModel,
+    navHostController: NavHostController
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -311,22 +324,25 @@ fun Actors(
             when (tvCredits.value) {
                 is DataState.Loading -> {
                 }
+
                 is DataState.Success -> {
                     val castList = (tvCredits.value as DataState.Success).data.cast
                     for (actor in castList) {
                         Column(
                             verticalArrangement = Arrangement.SpaceEvenly
                         ) {
-
                             val profileImageUrl =
                                 viewModel.createProfileImageUrl(actor.profile_path)
                             ActorCircle(
                                 photoUrl = profileImageUrl,
-                                actorName = actor.name
+                                actorName = actor.name,
+                                actorId = actor.id,
+                                navHostController = navHostController
                             )
                         }
                     }
                 }
+
                 is DataState.Error -> {
                     Text("Data error!")
                 }
@@ -338,7 +354,9 @@ fun Actors(
 @Composable
 fun ActorCircle(
     photoUrl: String,
-    actorName: String
+    actorName: String,
+    actorId: Int,
+    navHostController: NavHostController
 ) {
     val circleSize = 80.dp
     Column(
@@ -360,6 +378,9 @@ fun ActorCircle(
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(CircleShape)
+                    .clickable {
+                        navHostController.navigate("${ActorScreens.ActorDetailScreen.route}/$actorId")
+                    }
             )
         }
     }
@@ -369,7 +390,7 @@ fun ActorCircle(
 @Preview
 @Composable
 fun TvSeriesDetailScreenPreview() {
-    TvDetailScreen(0)
+    TvDetailScreen(0, rememberNavController())
 }
 
 

@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.myapplication.ui.BottomBarScreen
+import com.example.myapplication.ui.screen.home.actordetail.ActorDetailScreen
 import com.example.myapplication.ui.screen.home.moviedetail.MovieDetailScreen
 import com.example.myapplication.ui.screen.home.movieshome.MoviesHomeScreen
 import com.example.myapplication.ui.screen.home.movieshome.MoviesHomeScreenViewModel
@@ -44,7 +45,13 @@ fun HomeNavGraph(
         }
         composable(route = "${TvsScreens.TvSeriesDetailScreen.route}/{series_id}") { backStackEntry ->
             val seriesId = backStackEntry.arguments?.getString("series_id")
-            TvDetailScreen(seriesId = seriesId!!.toInt())
+            TvDetailScreen(
+                seriesId = seriesId!!.toInt(),
+                navHostController = navController)
+        }
+        composable(route = "${ActorScreens.ActorDetailScreen.route}/{actor_id}") { backStackEntry ->
+            val actorId = backStackEntry.arguments?.getString("actor_id")
+            ActorDetailScreen(actorId = actorId!!.toInt())
         }
     }
 }
@@ -54,4 +61,7 @@ sealed class MoviesScreens(val route: String) {
 }
 sealed class TvsScreens(val route: String) {
     object TvSeriesDetailScreen : TvsScreens(route = "TV_SERIES_DETAIL")
+}
+sealed class ActorScreens(val route: String) {
+    object ActorDetailScreen : ActorScreens(route = "ACTOR_DETAIL")
 }

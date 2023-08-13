@@ -95,7 +95,7 @@ fun MovieDetailScreen(movieId: Int) {
 }
 
 @Composable
-private fun MovieCover(
+fun MovieCover(
     modifier: Modifier = Modifier,
     movieInfo: State<DataState<SingleMovieModel>>
 ) {
@@ -306,7 +306,7 @@ private fun MovieRate(modifier: Modifier = Modifier, rate: String) {
 }
 
 @Composable
-private fun CircularProgress() {
+fun CircularProgress() {
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -317,7 +317,7 @@ private fun CircularProgress() {
 }
 
 @Composable
-private fun StatusBarColor() {
+fun StatusBarColor() {
     val systemUIController = rememberSystemUiController()
     LaunchedEffect(key1 = true) {
         systemUIController.isStatusBarVisible = false

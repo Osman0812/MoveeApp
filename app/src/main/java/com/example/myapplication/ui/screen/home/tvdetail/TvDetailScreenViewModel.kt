@@ -55,7 +55,6 @@ class TvDetailScreenViewModel @Inject constructor(private val tvSeriesRepository
             }
         }
     }
-
     fun createProfileImageUrl(profilePath: String?): String {
         val baseUrl = Constants.IMAGE_URL
         return if (!profilePath.isNullOrBlank()) {
