@@ -102,7 +102,7 @@ fun MoviesHomeScreen(
 }
 
 @Composable
-private fun Background(modifier: Modifier = Modifier) {
+fun Background(modifier: Modifier = Modifier) {
     Column {
         Box(
             modifier = modifier

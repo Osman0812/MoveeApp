@@ -22,10 +22,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -35,6 +37,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -53,20 +56,21 @@ import coil.compose.AsyncImage
 import com.example.myapplication.R
 import com.example.myapplication.data.model.genresmodel.Genre
 import com.example.myapplication.graphs.TvsScreens
+import com.example.myapplication.ui.components.IndicatorLine
+import com.example.myapplication.ui.screen.home.movieshome.Background
 import com.example.myapplication.util.state.DataState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TvSeriesScreen(
     viewModel: TvSeriesViewModel = hiltViewModel(),
-    navHostController: NavHostController) {
+    navHostController: NavHostController
+) {
     val scrollState = rememberScrollState()
-    val config = LocalConfiguration.current
     val genres = viewModel.tvSeriesGenresFlow.collectAsState()
-
     Background(
         if (scrollState.value <= scrollState.maxValue / 2) {
-            Modifier.background(color = Color(0xE6003DFF))
+            Modifier.background(color = Color.Blue)
         } else {
             Modifier.background(color = Color.White)
         }
@@ -74,47 +78,31 @@ fun TvSeriesScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp),
+            .padding(32.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
-
-        ) {
-
+    ) {
         item {
             Text(
                 text = stringResource(id = R.string.tv_series_title),
                 fontWeight = FontWeight.Bold,
                 fontSize = 34.sp,
                 color = Color.White,
-                modifier = Modifier.padding(start = 32.dp, top = 32.dp)
+                modifier = Modifier.padding(1.dp)
             )
-
         }
         item {
-            PopularTvSeriesAdded(viewModel = viewModel, genres = genres, navHostController = navHostController)
+            PopularTvSeriesAdded(
+                viewModel = viewModel,
+                genres = genres,
+                navHostController = navHostController
+            )
         }
         stickyHeader {
-            TopRatedTvSeries(viewModel = viewModel, genre = genres, navHostController = navHostController)
+            TopRatedTvSeries(
+                viewModel = viewModel,
+                navHostController = navHostController
+            )
         }
-    }
-}
-
-
-@Composable
-private fun Background(modifier: Modifier) {
-    Column {
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .weight(1f)
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(2.5f)
-                .background(color = Color.White)
-        )
-
-
     }
 }
 
@@ -138,13 +126,11 @@ private fun PopularTvSeriesAdded(
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val itemWidth = with(LocalDensity.current) { screenWidth * 0.7f }
     val itemHeight = with(LocalDensity.current) { screenHeight * 0.8f }
-
     if (popularTVSeries.itemCount > 0) {
         currentTitle.value = popularTVSeries.itemSnapshotList.items[scrollIndex.value].name
         currentOverview.value = popularTVSeries.itemSnapshotList.items[scrollIndex.value].overview
         currentAverage.value =
             popularTVSeries.itemSnapshotList.items[scrollIndex.value].vote_average.toString()
-
         LaunchedEffect(currentFirstItem) {
             currentGenres.value = ""
             when (genres.value) {
@@ -157,6 +143,7 @@ private fun PopularTvSeriesAdded(
                     )
                     println(currentGenres.value)
                 }
+
                 is DataState.Error -> {
                     println("Genres Failed!")
                 }
@@ -167,8 +154,7 @@ private fun PopularTvSeriesAdded(
         contentPadding = PaddingValues(start = 32.dp, end = 16.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(screenWith.dp)
-            .background(Color.Transparent),
+            .height(screenWith.dp),
         horizontalArrangement = Arrangement.Center,
         state = lazyRowState
     ) {
@@ -177,11 +163,8 @@ private fun PopularTvSeriesAdded(
             if (series != null) {
                 SinglePopularTVSeries(
                     modifier = Modifier
-                        .padding(end = 16.dp)
                         .width(itemWidth)
                         .height(itemHeight)
-                        //.aspectRatio(2f/3f)
-                        .clip(RoundedCornerShape(8.dp))
                         .clickable {
                             val seriesId = popularTVSeries[index]!!.id
                             navHostController.navigate("${TvsScreens.TvSeriesDetailScreen.route}/$seriesId")
@@ -191,47 +174,90 @@ private fun PopularTvSeriesAdded(
             }
         }
     }
-
     TvSeriesInfo(
         movieName = currentTitle.value,
-        overView = currentOverview.value,
         voteAverage = currentAverage.value,
         genres = currentGenres.value
     )
-
 }
 
 @Composable
 private fun SinglePopularTVSeries(
     modifier: Modifier = Modifier,
     imagePath: String,
+    tvName: String? = null,
+    tvRate: String? = null,
+    imageAspectRatio: Float? = null
+) {
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val height = screenHeight / 2
+    Card(
+        elevation = 22.dp,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(height)
+            .padding(15.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .clickable { },
 
-    ) {
-    Surface(
-        color = Color.Transparent,
-    ) {
-        Column(
-            modifier = modifier.fillMaxHeight(),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            SingleTvImage(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .align(Alignment.CenterHorizontally),
-                imagePath = imagePath,
-
+        Column(
+            modifier = modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(7.dp),
+        ) {
+            if (imageAspectRatio != null) {
+                val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+                val imageHeight = with(LocalDensity.current) { screenWidth / imageAspectRatio }
+                SingleTvImage(
+                    modifier = Modifier
+                        .height(imageHeight)
+                        .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally),
+                    imagePath = imagePath,
                 )
+            } else {
+                SingleTvImage(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally),
+                    imagePath = imagePath,
+                )
+            }
+            if (tvName != null) {
+                Text(
+                    modifier = Modifier.padding(start = 7.dp),
+                    text = tvName,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp
+                )
+            }
+            if (tvRate != null) {
+                Box(
+                    modifier = modifier.fillMaxSize(),
+                    contentAlignment = Alignment.BottomStart
+                ) {
+                    TvSeriesRate(
+                        modifier = modifier
+                            .padding(start = 8.dp)
+                            .size(50.dp, 25.dp)
+                            .clip(shape = RoundedCornerShape(20.dp))
+                            .background(color = Color.Blue),
+                        fontSize = 12,
+                        rate = tvRate
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun TopRatedTvSeries(viewModel: TvSeriesViewModel, genre: State<DataState<List<Genre>>>, navHostController: NavHostController) {
-
+private fun TopRatedTvSeries(
+    viewModel: TvSeriesViewModel,
+    navHostController: NavHostController
+) {
     val topRatedTvSeries = viewModel.tvSeriesTopRatedFlow.collectAsLazyPagingItems()
-    val movieGenre = remember {
-        mutableStateOf("")
-    }
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -240,32 +266,32 @@ private fun TopRatedTvSeries(viewModel: TvSeriesViewModel, genre: State<DataStat
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold
         )
-    }
-    val config = LocalConfiguration.current
-    val screenHeight = config.screenHeightDp
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier
-            .padding(bottom = 10.dp)
-            .height(screenHeight.dp),
-        verticalArrangement = Arrangement.spacedBy(15.dp),
-        contentPadding = PaddingValues(bottom = 10.dp)
-    ) {
-        items(topRatedTvSeries.itemCount) { index ->
-            val series = topRatedTvSeries[index]
-            if (series != null) {
-                SinglePopularTVSeries(
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .width(45.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .clickable {
-                            val seriesId = topRatedTvSeries[index]!!.id
-                            navHostController.navigate("${TvsScreens.TvSeriesDetailScreen.route}/$seriesId")
-
-                        },
-                    imagePath = series.poster_path
-                )
+        val config = LocalConfiguration.current
+        val screenHeight = config.screenHeightDp
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier
+                .padding(bottom = 10.dp)
+                .height(screenHeight.dp),
+            verticalArrangement = Arrangement.spacedBy(15.dp),
+            contentPadding = PaddingValues(bottom = 10.dp),
+        ) {
+            items(topRatedTvSeries.itemCount) { index ->
+                val series = topRatedTvSeries[index]
+                if (series != null) {
+                    SinglePopularTVSeries(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable {
+                                val seriesId = topRatedTvSeries[index]!!.id
+                                navHostController.navigate("${TvsScreens.TvSeriesDetailScreen.route}/$seriesId")
+                            },
+                        imagePath = series.poster_path,
+                        tvName = series.name,
+                        tvRate = series.vote_average.toString(),
+                        imageAspectRatio = 16 / 9f
+                    )
+                }
             }
         }
     }
@@ -292,19 +318,17 @@ private fun SingleTvImage(modifier: Modifier = Modifier, imagePath: String) {
 private fun TvSeriesInfo(
     modifier: Modifier = Modifier,
     movieName: String,
-    overView: String,
     voteAverage: String,
     genres: String
 ) {
-
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         TvSeriesRate(
-            modifier = Modifier
+            modifier = modifier
                 .padding(top = 10.dp)
-                .size(60.dp, 25.dp)
+                .size(50.dp, 25.dp)
                 .clip(shape = RoundedCornerShape(20.dp))
                 .background(color = Color.Blue),
             fontSize = 12,
@@ -314,15 +338,18 @@ private fun TvSeriesInfo(
             text = movieName,
             style = MaterialTheme.typography.displayLarge
         )
-
         Text(
             text = genres,
             style = TextStyle(
                 fontSize = 15.sp
             )
         )
+        IndicatorLine(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+        )
     }
-
 }
 
 @Composable
@@ -331,7 +358,6 @@ fun TvSeriesRate(modifier: Modifier = Modifier, fontSize: Int, rate: String) {
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
-
     ) {
         val iconSource = painterResource(id = R.drawable.ic_star)
         Icon(
@@ -339,10 +365,7 @@ fun TvSeriesRate(modifier: Modifier = Modifier, fontSize: Int, rate: String) {
             contentDescription = "Star",
             tint = Color.White
         )
-
-        androidx.compose.material3.Text(
-            modifier = Modifier
-                .padding(start = 5.dp),
+        Text(
             text = rate,
             style = MaterialTheme.typography.labelSmall,
             fontSize = fontSize.sp

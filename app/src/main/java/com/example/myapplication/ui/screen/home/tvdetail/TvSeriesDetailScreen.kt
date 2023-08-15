@@ -43,9 +43,6 @@ import com.example.myapplication.util.state.DataState
 
 @Composable
 fun TvDetailScreen(seriesId: Int) {
-
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp
     val viewModel = hiltViewModel<TvDetailScreenViewModel>()
     val scrollState = rememberScrollState()
     val tvInfo = viewModel.singleTvInfoFlow.collectAsState()
@@ -55,6 +52,7 @@ fun TvDetailScreen(seriesId: Int) {
         is DataState.Loading -> {
             CircularProgress()
         }
+
         is DataState.Success -> {
             Column(
                 modifier = Modifier
@@ -62,9 +60,6 @@ fun TvDetailScreen(seriesId: Int) {
                     .padding(bottom = 10.dp)
             ) {
                 TvCover(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height((screenHeight / 2.20).dp),
                     tvInfo = tvInfo
                 )
                 TvSeriesInfo(
@@ -79,6 +74,7 @@ fun TvDetailScreen(seriesId: Int) {
                 )
             }
         }
+
         is DataState.Error -> {
             Text("An error occurred! Please try again!")
         }
@@ -94,16 +90,16 @@ fun TvCover(
     val asyncImage = Constants.IMAGE_URL + imagePath
     Box(modifier = modifier) {
         AsyncImage(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
             model = asyncImage,
             placeholder = painterResource(id = R.drawable.movies_dummy),
             contentDescription = "null",
-            contentScale = ContentScale.FillWidth
+            contentScale = ContentScale.Crop
         )
         TvSeriesRate(
-            modifier = Modifier
+            modifier = modifier
                 .align(Alignment.BottomStart)
                 .padding(start = 30.dp, top = 10.dp)
                 .size(60.dp, 25.dp)
@@ -162,10 +158,12 @@ private fun TvSeriesInfo(
                     painter = painterResource(id = R.drawable.ic_duration),
                     contentDescription = "Duration Icon"
                 )
-                Text(
-                    text = "$tvSeriesDuration min",
-                    fontSize = 15.sp,
-                )
+                if (tvSeriesDuration != "null") {
+                    Text(
+                        text = "$tvSeriesDuration min",
+                        fontSize = 15.sp,
+                    )
+                }
             }
             Text(
                 text = "|",
@@ -211,6 +209,7 @@ private fun TvSeriesSummary(
             is DataState.Loading -> {
                 CircularProgress()
             }
+
             is DataState.Success -> {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -225,6 +224,7 @@ private fun TvSeriesSummary(
                     TvSummaryExtension(labelName = labelCreator, name = director)
                 }
             }
+
             is DataState.Error -> {
                 Text("Data error!")
             }
@@ -264,7 +264,6 @@ fun SeasonsView(
             fontSize = 14.sp,
             modifier = Modifier
                 .align(Alignment.Center)
-                .size(width = 90.dp, height = 24.dp)
                 .padding(2.dp),
             color = Color.White
         )
