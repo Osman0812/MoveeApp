@@ -159,7 +159,7 @@ private fun PopularTvSeriesAdded(
                         .width(itemWidth)
                         .height(itemHeight)
                         .clickable {
-                            val seriesId = popularTVSeries[index]!!.id
+                            val seriesId = popularTVSeries[index]?.id
                             navHostController.navigate("${TvSeriesDetailScreens.TvSeriesDetailScreen.route}/$seriesId")
                         },
                     imagePath = it,
@@ -274,7 +274,7 @@ private fun TopRatedTvSeries(
                         modifier = Modifier
                             .clip(RoundedCornerShape(16.dp))
                             .clickable {
-                                val seriesId = topRatedTvSeries[index]!!.id
+                                val seriesId = topRatedTvSeries[index]?.id
                                 navHostController.navigate("${TvSeriesDetailScreens.TvSeriesDetailScreen.route}/$seriesId")
                             },
                         imagePath = it,

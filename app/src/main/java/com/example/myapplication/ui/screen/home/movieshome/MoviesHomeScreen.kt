@@ -162,17 +162,19 @@ private fun PlayingMoviesList(
         state = lazyRowState
     ) {
         items(movies.itemCount) { movie ->
-            SingleMovieImage(
-                modifier = Modifier
-                    .width((screenWith * 0.7).dp)
-                    .height(screenWith.dp)
-                    .clip(shape = RoundedCornerShape(15.dp))
-                    .clickable {
-                        val movieId = movies[movie]!!.id
-                        navHostController.navigate("${MoviesScreens.MovieDetailScreen.route}/$movieId")
-                    },
-                imagePath = movies[movie]!!.posterPath
-            )
+            movies[movie]?.let {
+                SingleMovieImage(
+                    modifier = Modifier
+                        .width((screenWith * 0.7).dp)
+                        .height(screenWith.dp)
+                        .clip(shape = RoundedCornerShape(15.dp))
+                        .clickable {
+                            val movieId = movies[movie]?.id
+                            navHostController.navigate("${MoviesScreens.MovieDetailScreen.route}/$movieId")
+                        },
+                    imagePath = it.posterPath
+                )
+            }
         }
     }
 
@@ -270,12 +272,12 @@ private fun PopularMovies(
                 SinglePopularMovie(
                     modifier = Modifier,
                     navHostController = navHostController,
-                    imagePath = popularMovies[movie]!!.posterPath,
-                    movieName = popularMovies[movie]!!.title,
+                    imagePath = popularMovies[movie]?.posterPath.toString(),
+                    movieName = popularMovies[movie]?.title.toString(),
                     genre = movieGenre.value,
-                    voteAverage = popularMovies[movie]!!.voteAverage.toString(),
-                    date = popularMovies[movie]!!.releaseDate,
-                    movieId = popularMovies[movie]!!.id.toString()
+                    voteAverage = popularMovies[movie]?.voteAverage.toString(),
+                    date = popularMovies[movie]?.releaseDate.toString(),
+                    movieId = popularMovies[movie]?.id.toString()
                 )
             }
         }
