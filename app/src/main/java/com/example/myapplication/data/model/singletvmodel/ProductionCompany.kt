@@ -1,9 +1,7 @@
 package com.example.myapplication.data.model.singletvmodel
 
 import com.google.gson.annotations.SerializedName
-
-
-data class ProductionCompany(
+data class ProductionCompanyDto(
     val id: Int,
     @SerializedName("logo_path")
     val logoPath: String,

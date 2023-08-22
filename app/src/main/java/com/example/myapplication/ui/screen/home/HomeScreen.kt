@@ -92,7 +92,7 @@ fun RowScope.AddItem(
         icon = {
             if (!isSelected) {
                 Image(
-                    painter = painterResource(id = screen.icon),
+                    painter = painterResource(id = screen.unselectedIcon),
                     contentDescription = "Navigation Icon"
                 )
             } else {

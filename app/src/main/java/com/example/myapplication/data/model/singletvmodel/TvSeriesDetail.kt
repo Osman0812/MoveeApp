@@ -7,7 +7,7 @@ data class TvSeriesDetailDto(
     @SerializedName("backdrop_path")
     val backdropPath: String,
     @SerializedName("created_by")
-    val createdBy: List<CreatedBy>,
+    val createdBy: List<CreatedByDto>,
     @SerializedName("episode_run_time")
     val episodeRunTime: List<Int>,
     @SerializedName("first_air_date")
@@ -23,7 +23,7 @@ data class TvSeriesDetailDto(
     @SerializedName("last_episode_to_air")
     val lastEpisodeToAir: LastEpisodeToAir,
     val name: String,
-    val networks: List<Network>,
+    val networks: List<NetworkDto>,
     @SerializedName("next_episode_to_air")
     val nextEpisodeToAir: Any,
     @SerializedName("number_of_episodes")
@@ -41,12 +41,12 @@ data class TvSeriesDetailDto(
     @SerializedName("poster_path")
     val posterPath: String,
     @SerializedName("production_companies")
-    val productionCompanies: List<ProductionCompany>,
+    val productionCompanies: List<ProductionCompanyDto>,
     @SerializedName("production_countries")
-    val productionCountries: List<ProductionCountry>,
+    val productionCountries: List<ProductionCountryDto>,
     val seasons: List<Season>,
     @SerializedName("spoken_languages")
-    val spokenLanguages: List<SpokenLanguage>,
+    val spokenLanguages: List<SpokenLanguageDto>,
     val status: String,
     val tagline: String,
     val type: String,

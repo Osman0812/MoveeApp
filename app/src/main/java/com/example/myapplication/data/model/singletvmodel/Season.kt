@@ -1,6 +1,7 @@
 package com.example.myapplication.data.model.singletvmodel
 
 import com.google.gson.annotations.SerializedName
+
 data class Season(
     @SerializedName("air_date")
     val airDate: String,

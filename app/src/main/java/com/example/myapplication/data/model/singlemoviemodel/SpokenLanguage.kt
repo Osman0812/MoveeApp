@@ -2,7 +2,7 @@ package com.example.myapplication.data.model.singlemoviemodel
 
 import com.google.gson.annotations.SerializedName
 
-data class SpokenLanguage(
+data class SpokenLanguageDto(
     @SerializedName("english_name")
     val englishName: String,
     @SerializedName("iso_639_1")

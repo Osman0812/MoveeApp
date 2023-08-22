@@ -52,6 +52,7 @@ import com.example.myapplication.data.model.genresmodel.GenreDto
 import com.example.myapplication.graphs.TvSeriesDetailScreens
 import com.example.myapplication.ui.components.IndicatorLine
 import com.example.myapplication.ui.screen.home.moviedetail.CircularProgress
+import com.example.myapplication.ui.screen.home.moviedetail.MovieDetailScreenViewModel
 import com.example.myapplication.ui.screen.home.movieshome.Background
 import com.example.myapplication.util.state.DataState
 
@@ -108,7 +109,7 @@ fun TvSeriesScreen(
         }
 
         is DataState.Error -> {
-
+            DataState.Error(Exception(MovieDetailScreenViewModel.ErrorMessages.GENERIC_ERROR))
         }
     }
 }
@@ -286,8 +287,6 @@ private fun TopRatedTvSeries(
         }
     }
 }
-
-
 
 @Composable
 private fun SingleTvImage(modifier: Modifier = Modifier, imagePath: String) {

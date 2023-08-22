@@ -2,8 +2,7 @@ package com.example.myapplication.data.model.singletvmodel
 
 import com.google.gson.annotations.SerializedName
 
-
-data class Network(
+data class NetworkDto(
     val id: Int,
     @SerializedName("logo_path")
     val logoPath: String,

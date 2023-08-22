@@ -2,7 +2,7 @@ package com.example.myapplication.data.model.moviecreditsmodel
 
 
 import com.google.gson.annotations.SerializedName
-data class Cast(
+data class CastDto(
     @SerializedName("adult")
     val adult: Boolean,
     @SerializedName("cast_id")

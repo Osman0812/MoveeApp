@@ -72,12 +72,12 @@ fun TvDetailScreen(seriesId: Int) {
                     .verticalScroll(scrollState)
                     .padding(bottom = 10.dp)
             ) {
-                tvSeries.tvPosterPath?.let {
-                    tvSeries.tvVoteAverage?.let { it1 ->
+                tvSeries.tvPosterPath?.let { image ->
+                    tvSeries.tvVoteAverage?.let { vote ->
                         TvCover(
                             modifier = Modifier,
-                            imagePath = it,
-                            tvRate = it1
+                            imagePath = image,
+                            tvRate = vote
                         )
                     }
                 }

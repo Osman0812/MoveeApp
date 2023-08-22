@@ -3,7 +3,7 @@ package com.example.myapplication.data.model.singletvmodel
 import com.google.gson.annotations.SerializedName
 
 
-data class CreatedBy(
+data class CreatedByDto(
     @SerializedName("credit_id")
     val creditId: String,
     @SerializedName("gender")
