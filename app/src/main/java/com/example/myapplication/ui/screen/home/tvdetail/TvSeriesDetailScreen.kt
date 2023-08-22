@@ -18,14 +18,13 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,8 +34,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.myapplication.R
-import com.example.myapplication.data.model.singletvmodel.TvSeriesDetailModel
 import com.example.myapplication.ui.components.IndicatorLine
+import com.example.myapplication.ui.screen.home.moviedetail.MovieDetailScreenViewModel
+import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesDiretorsUiModel
+import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesUiModel
 import com.example.myapplication.ui.screen.home.tvseries.TvSeriesRate
 import com.example.myapplication.util.Constants
 import com.example.myapplication.util.state.DataState
@@ -45,38 +46,57 @@ import com.example.myapplication.util.state.DataState
 fun TvDetailScreen(seriesId: Int) {
     val viewModel = hiltViewModel<TvDetailScreenViewModel>()
     val scrollState = rememberScrollState()
-    val tvInfo = viewModel.singleTvInfoFlow.collectAsState()
+    val tvInfo = viewModel.singleTvInfoFlow.collectAsState().value
+    val tvSummary = viewModel.tvDirectorsFlow.collectAsState().value
     viewModel.getSingleTvInfo(seriesId)
+    viewModel.getTvSeriesWriters(seriesId)
 
-    when (tvInfo.value) {
+    when (tvInfo) {
         is DataState.Loading -> {
             CircularProgress()
         }
 
         is DataState.Success -> {
+            val tvSeries = tvInfo.data
+            var summary = TvSeriesDiretorsUiModel()
+            when (tvSummary) {
+                is DataState.Success -> {
+                    summary = tvSummary.data
+                }
+
+                else -> TvSeriesDiretorsUiModel()
+            }
+
             Column(
                 modifier = Modifier
                     .verticalScroll(scrollState)
                     .padding(bottom = 10.dp)
             ) {
-                TvCover(
-                    tvInfo = tvInfo
-                )
+                tvSeries.tvPosterPath?.let {
+                    tvSeries.tvVoteAverage?.let { it1 ->
+                        TvCover(
+                            modifier = Modifier,
+                            imagePath = it,
+                            tvRate = it1
+                        )
+                    }
+                }
                 TvSeriesInfo(
                     modifier = Modifier
                         .padding(start = 32.dp, end = 32.dp, top = 8.dp),
-                    tvInfo = tvInfo
+                    tvSeriesUiModel = tvSeries
                 )
                 TvSeriesSummary(
                     modifier = Modifier
                         .padding(start = 32.dp, end = 32.dp, top = 16.dp),
-                    tvInfo = tvInfo
+                    tvSeriesUiModel = tvSeries,
+                    tvSeriesWritersUiModel = summary,
                 )
             }
         }
 
         is DataState.Error -> {
-            Text("An error occurred! Please try again!")
+            DataState.Error(Exception(MovieDetailScreenViewModel.ErrorMessages.GENERIC_ERROR))
         }
     }
 }
@@ -84,9 +104,9 @@ fun TvDetailScreen(seriesId: Int) {
 @Composable
 fun TvCover(
     modifier: Modifier = Modifier,
-    tvInfo: State<DataState<TvSeriesDetailModel>>
+    imagePath: String,
+    tvRate: String
 ) {
-    val imagePath = (tvInfo.value as DataState.Success).data.poster_path
     val asyncImage = Constants.IMAGE_URL + imagePath
     Box(modifier = modifier) {
         AsyncImage(
@@ -95,7 +115,7 @@ fun TvCover(
                 .padding(bottom = 10.dp),
             model = asyncImage,
             placeholder = painterResource(id = R.drawable.movies_dummy),
-            contentDescription = "null",
+            contentDescription = "dummy_image",
             contentScale = ContentScale.Crop
         )
         TvSeriesRate(
@@ -106,7 +126,7 @@ fun TvCover(
                 .clip(shape = RoundedCornerShape(20.dp))
                 .background(color = Color.Blue),
             fontSize = 12,
-            rate = "8.9"
+            rate = tvRate
         )
     }
 }
@@ -125,28 +145,27 @@ private fun CircularProgress() {
 @Composable
 private fun TvSeriesInfo(
     modifier: Modifier = Modifier,
-    tvInfo: State<DataState<TvSeriesDetailModel>>
+    tvSeriesUiModel: TvSeriesUiModel
 ) {
-    val tvSeriesName = (tvInfo.value as DataState.Success).data.name
-    val tvSeriesGenresList = (tvInfo.value as DataState.Success).data.genres
-    val tvSeriesDuration =
-        (tvInfo.value as DataState.Success).data.episode_run_time.getOrNull(0).toString()
-    val tvSeriesReleaseDate = (tvInfo.value as DataState.Success).data.first_air_date
-    val movieGenre = tvSeriesGenresList.joinToString(separator = ", ") { it.name }
+    val tvSeriesGenre = tvSeriesUiModel.tvGenres?.joinToString(separator = ", ") { it.name }
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(
-            text = tvSeriesName,
-            style = MaterialTheme.typography.displayLarge
-        )
-        Text(
-            text = movieGenre,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Normal,
-            color = Color.Black
-        )
+        tvSeriesUiModel.tvTitle?.let {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.displayLarge
+            )
+        }
+        if (tvSeriesGenre != null) {
+            Text(
+                text = tvSeriesGenre,
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 15.sp),
+                fontWeight = FontWeight.Normal,
+                color = Color.Black
+            )
+        }
         Row(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
@@ -158,10 +177,10 @@ private fun TvSeriesInfo(
                     painter = painterResource(id = R.drawable.ic_duration),
                     contentDescription = "Duration Icon"
                 )
-                if (tvSeriesDuration != "null") {
+                if (tvSeriesUiModel.tvDuration.toString() != "null") {
                     Text(
-                        text = "$tvSeriesDuration min",
-                        fontSize = 15.sp,
+                        text = "${tvSeriesUiModel.tvDuration?.firstOrNull()} min",
+                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 15.sp)
                     )
                 }
             }
@@ -176,10 +195,12 @@ private fun TvSeriesInfo(
                     painter = painterResource(id = R.drawable.ic_calendar),
                     contentDescription = "Calendar Icon"
                 )
-                Text(
-                    text = tvSeriesReleaseDate,
-                    fontSize = 15.sp,
-                )
+                tvSeriesUiModel.tvReleaseDate?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 15.sp)
+                    )
+                }
             }
         }
         IndicatorLine(
@@ -194,39 +215,28 @@ private fun TvSeriesInfo(
 @Composable
 private fun TvSeriesSummary(
     modifier: Modifier = Modifier,
-    tvInfo: State<DataState<TvSeriesDetailModel>>,
+    tvSeriesUiModel: TvSeriesUiModel,
+    tvSeriesWritersUiModel: TvSeriesDiretorsUiModel
 ) {
-    val tvOverView = (tvInfo.value as DataState.Success).data.overview
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = tvOverView,
-            fontSize = 17.sp,
+            text = tvSeriesUiModel.tvOverview.toString(),
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 17.sp)
         )
-        when (tvInfo.value) {
-            is DataState.Loading -> {
-                CircularProgress()
-            }
 
-            is DataState.Success -> {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    val labelCreator = stringResource(id = R.string.tv_series_detail_screen_creator)
-                    val seasonsList = (tvInfo.value as DataState.Success).data.number_of_seasons
-                    val creators = (tvInfo.value as DataState.Success).data.created_by
-                    SeasonsView("$seasonsList seasons")
-                    val director = creators.joinToString {
-                        it.name
-                    }
-                    TvSummaryExtension(labelName = labelCreator, name = director)
-                }
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            val labelCreator = stringResource(id = R.string.tv_series_detail_screen_creator)
+            tvSeriesWritersUiModel.director?.let {
+                TvSummaryExtension(labelName = labelCreator, name = it)
             }
-
-            is DataState.Error -> {
-                Text("Data error!")
+            tvSeriesUiModel.tvNumberOfSeasons?.let {
+                SeasonsView("$it seasons")
             }
         }
     }
@@ -239,12 +249,12 @@ private fun TvSummaryExtension(labelName: String, name: String) {
     ) {
         Text(
             text = labelName,
-            fontSize = 17.sp
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 17.sp)
         )
         Text(
             text = name,
-            fontSize = 17.sp,
-            color = Color(0xff003dff)
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 17.sp),
+            color = colorResource(id = R.color.blue)
         )
     }
 }
@@ -261,7 +271,7 @@ fun SeasonsView(
     ) {
         Text(
             text = text,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 14.sp),
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(2.dp),

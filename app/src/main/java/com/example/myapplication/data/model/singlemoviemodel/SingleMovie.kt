@@ -2,7 +2,7 @@ package com.example.myapplication.data.model.singlemoviemodel
 
 import com.google.gson.annotations.SerializedName
 
-data class SingleMovieModel(
+data class SingleMovieDto(
     @SerializedName("adult")
     val adult: Boolean,
     @SerializedName("backdrop_path")
@@ -12,7 +12,7 @@ data class SingleMovieModel(
     @SerializedName("budget")
     val budget: Int,
     @SerializedName("genres")
-    val genres: List<Genre>,
+    val genres: List<GenreDto>,
     @SerializedName("homepage")
     val homepage: String,
     @SerializedName("id")

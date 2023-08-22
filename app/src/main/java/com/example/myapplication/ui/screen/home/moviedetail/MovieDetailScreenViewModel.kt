@@ -2,9 +2,9 @@ package com.example.myapplication.ui.screen.home.moviedetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.data.model.moviecreditsmodel.MovieCreditsModel
-import com.example.myapplication.data.model.singlemoviemodel.SingleMovieModel
 import com.example.myapplication.data.repository.MoviesRepository
+import com.example.myapplication.ui.screen.home.moviedetail.movieuimodel.MovieUiModel
+import com.example.myapplication.ui.screen.home.moviedetail.movieuimodel.MoviesCreditsUiModel
 import com.example.myapplication.util.state.ApiResult
 import com.example.myapplication.util.state.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,50 +16,70 @@ import javax.inject.Inject
 @HiltViewModel
 class MovieDetailScreenViewModel @Inject constructor(private val moviesRepository: MoviesRepository) :
     ViewModel() {
-
     private val _singleMovieInfoFlow =
-        MutableStateFlow<DataState<SingleMovieModel>>(DataState.Loading)
-    val singleMovieInfoFlow: StateFlow<DataState<SingleMovieModel>> get() = _singleMovieInfoFlow
+        MutableStateFlow<DataState<MovieUiModel>>(DataState.Loading)
+    val singleMovieInfoFlow: StateFlow<DataState<MovieUiModel>> get() = _singleMovieInfoFlow
 
     private val _movieCreditsFlow =
-        MutableStateFlow<DataState<MovieCreditsModel>>(DataState.Loading)
-    val movieCreditsFlow: StateFlow<DataState<MovieCreditsModel>> get() = _movieCreditsFlow
-
+        MutableStateFlow<DataState<MoviesCreditsUiModel>>(DataState.Loading)
+    val movieCreditsFlow: StateFlow<DataState<MoviesCreditsUiModel>> get() = _movieCreditsFlow
     fun getSingleMovieInfo(movieId: Int) {
         viewModelScope.launch {
-            val apiResponse = moviesRepository.getSingleMovie(movieId)
-
-            when (apiResponse) {
+            when (val apiResponse = moviesRepository.getSingleMovie(movieId)) {
                 is ApiResult.Success -> {
                     val movieInfo = apiResponse.response.body()
-                    _singleMovieInfoFlow.value = DataState.Success(movieInfo!!)
+                    if (movieInfo != null) {
+                        _singleMovieInfoFlow.value = DataState.Success(
+                            MovieUiModel(
+                                movieTitle = movieInfo.title,
+                                movieReleaseDate = movieInfo.releaseDate,
+                                movieDuration = movieInfo.runtime,
+                                movieGenres = movieInfo.genres,
+                                voteAverage = String.format("%.1f", movieInfo.voteAverage),
+                                posterPath = movieInfo.posterPath,
+                                overview = movieInfo.overview
+                            )
+                        )
+                    }
                 }
 
                 is ApiResult.Error -> {
                     _singleMovieInfoFlow.value =
-                        DataState.Error(Exception("Data cannot be fetched!"))
+                        DataState.Error(Exception(ErrorMessages.GENERIC_ERROR))
+
                 }
             }
-
         }
     }
 
     fun getMovieCredit(movieId: Int) {
         viewModelScope.launch {
-            val apiResponse = moviesRepository.getMovieCredits(movieId)
-
-            when (apiResponse) {
+            when (val apiResponse = moviesRepository.getMovieCredits(movieId)) {
                 is ApiResult.Success -> {
                     val movieCredits = apiResponse.response.body()
-                    _movieCreditsFlow.value = DataState.Success(movieCredits!!)
+                    if (movieCredits != null) {
+                        _movieCreditsFlow.value = DataState.Success(
+                            MoviesCreditsUiModel(
+                                director = movieCredits.crew.filter { it.job == "Director" }
+                                    .joinToString { it.name },
+                                stars = movieCredits.cast.filter { it.order == 0 || it.order == 1 }
+                                    .joinToString { it.originalName },
+                                writer = movieCredits.crew.filter { it.job == "Author" || it.job == "Writer" }
+                                    .joinToString { it.name }
+
+                            )
+                        )
+                    }
                 }
 
                 is ApiResult.Error -> {
-                    _movieCreditsFlow.value = DataState.Error(Exception("Data cannot be fetched!"))
+                    DataState.Error(Exception(ErrorMessages.GENERIC_ERROR))
                 }
             }
         }
     }
 
-
+    object ErrorMessages {
+        const val GENERIC_ERROR = "Data cannot be fetched!"
+    }
 }

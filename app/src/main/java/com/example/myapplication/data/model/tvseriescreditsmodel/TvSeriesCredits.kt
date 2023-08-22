@@ -1,8 +1,8 @@
-package com.example.myapplication.data.model.moviecreditsmodel
+package com.example.myapplication.data.model.tvseriescreditsmodel
 
 import com.google.gson.annotations.SerializedName
 
-data class MovieCreditsModel(
+data class TvSeriesCreditsDto(
     @SerializedName("cast")
     val cast: List<Cast>,
     @SerializedName("crew")

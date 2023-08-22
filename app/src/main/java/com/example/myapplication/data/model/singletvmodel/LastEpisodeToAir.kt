@@ -1,16 +1,27 @@
 package com.example.myapplication.data.model.singletvmodel
 
+
+import com.google.gson.annotations.SerializedName
+
 data class LastEpisodeToAir(
-    val air_date: String,
-    val episode_number: Int,
+    @SerializedName("air_date")
+    val airDate: String,
+    @SerializedName("episode_number")
+    val episodeNumber: Int,
     val id: Int,
     val name: String,
     val overview: String,
-    val production_code: String,
+    @SerializedName("production_code")
+    val productionCode: String,
     val runtime: Int,
-    val season_number: Int,
-    val show_id: Int,
-    val still_path: String,
-    val vote_average: Double,
-    val vote_count: Int
+    @SerializedName("season_number")
+    val seasonNumber: Int,
+    @SerializedName("show_id")
+    val showId: Int,
+    @SerializedName("still_path")
+    val stillPath: String,
+    @SerializedName("vote_average")
+    val voteAverage: Double,
+    @SerializedName("vote_count")
+    val voteCount: Int
 )

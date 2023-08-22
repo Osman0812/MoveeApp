@@ -3,6 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id("com.google.dagger.hilt.android")
+
+
 }
 def localProps = new Properties()
 def localPropsFile = rootProject.file("local.properties")
@@ -109,6 +111,9 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences-core:1.0.0"
     implementation "androidx.datastore:datastore-preferences:1.0.0"
     implementation "androidx.datastore:datastore:1.0.0"
+
+    //Moshi
+
 }
 kapt {
     correctErrorTypes = true

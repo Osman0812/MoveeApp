@@ -1,12 +1,10 @@
-package com.example.myapplication.data.model.moviecreditsmodel
-
+package com.example.myapplication.data.model.tvseriescreditsmodel
 
 import com.google.gson.annotations.SerializedName
+
 data class Cast(
     @SerializedName("adult")
     val adult: Boolean,
-    @SerializedName("cast_id")
-    val castId: Int,
     @SerializedName("character")
     val character: String,
     @SerializedName("credit_id")

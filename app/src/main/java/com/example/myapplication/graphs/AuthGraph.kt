@@ -43,7 +43,7 @@ fun NavGraphBuilder.authNavGraph(
 }
 
 sealed class AuthScreen(val route: String) {
-    object Splash : AuthScreen(route = "SPLASH")
-    object Login : AuthScreen(route = "LOGIN")
-    object WebView : AuthScreen(route = "WEB_VIEW_SCREEN")
+    object Splash : AuthScreen(route = "splash")
+    object Login : AuthScreen(route = "login")
+    object WebView : AuthScreen(route = "web_view_screen")
 }

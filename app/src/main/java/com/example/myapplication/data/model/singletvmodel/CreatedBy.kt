@@ -1,9 +1,17 @@
 package com.example.myapplication.data.model.singletvmodel
 
+import com.google.gson.annotations.SerializedName
+
+
 data class CreatedBy(
-    val credit_id: String,
+    @SerializedName("credit_id")
+    val creditId: String,
+    @SerializedName("gender")
     val gender: Int,
+    @SerializedName("id")
     val id: Int,
+    @SerializedName("name")
     val name: String,
-    val profile_path: String
+    @SerializedName("profile_path")
+    val profilePath: String
 )
