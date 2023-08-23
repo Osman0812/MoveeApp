@@ -317,7 +317,6 @@ fun StatusBarColor() {
     }
 }
 
-
 @Preview
 @Composable
 fun MoviesDetailScreenPreview() {

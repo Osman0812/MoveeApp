@@ -2,10 +2,12 @@ package com.example.myapplication.ui.screen.home.tvdetail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myapplication.R
 import com.example.myapplication.data.repository.TvSeriesRepository
 import com.example.myapplication.ui.screen.home.moviedetail.MovieDetailScreenViewModel
-import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesDiretorsUiModel
+import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesUICredits
 import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesUiModel
+import com.example.myapplication.util.Constants
 import com.example.myapplication.util.state.ApiResult
 import com.example.myapplication.util.state.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,11 +22,10 @@ class TvDetailScreenViewModel @Inject constructor(private val tvSeriesRepository
     private val _singleTvInfoFlow =
         MutableStateFlow<DataState<TvSeriesUiModel>>(DataState.Loading)
     val singleTvInfoFlow: StateFlow<DataState<TvSeriesUiModel>> get() = _singleTvInfoFlow
+    private val _tvCreditsFlow =
+        MutableStateFlow<DataState<TvSeriesUICredits>>(DataState.Loading)
+    val tvCreditsFlow: StateFlow<DataState<TvSeriesUICredits>> get() = _tvCreditsFlow
 
-
-    private val _tvDirectorsFlow =
-        MutableStateFlow<DataState<TvSeriesDiretorsUiModel>>(DataState.Loading)
-    val tvDirectorsFlow: StateFlow<DataState<TvSeriesDiretorsUiModel>> get() = _tvDirectorsFlow
     fun getSingleTvInfo(seriesId: Int) {
         viewModelScope.launch {
             when (val apiResponse = tvSeriesRepository.getSingleTv(seriesId)) {
@@ -40,7 +41,8 @@ class TvDetailScreenViewModel @Inject constructor(private val tvSeriesRepository
                                 tvOverview = tvInfo.overview,
                                 tvPosterPath = tvInfo.posterPath,
                                 tvVoteAverage = String.format("%.1f", tvInfo.voteAverage),
-                                tvNumberOfSeasons = tvInfo.numberOfSeasons
+                                tvNumberOfSeasons = tvInfo.numberOfSeasons,
+                                createBy = tvInfo.createdBy
                             )
                         )
                     }
@@ -55,25 +57,33 @@ class TvDetailScreenViewModel @Inject constructor(private val tvSeriesRepository
         }
     }
 
-    fun getTvSeriesWriters(seriesId: Int) {
+    fun getTvSeriesCredit(seriesId: Int) {
         viewModelScope.launch {
-            when (val directorsResponse = tvSeriesRepository.getTvSeriesCredits(seriesId)) {
+            when (val apiResponse = tvSeriesRepository.getTvSeriesCredits(seriesId)) {
                 is ApiResult.Success -> {
-                    val tvSeriesCredits = directorsResponse.response.body()
-                    if (tvSeriesCredits != null){
-                        _tvDirectorsFlow.value = DataState.Success(
-                            TvSeriesDiretorsUiModel(
-                                director = tvSeriesCredits.crew.filter { it.job == "Director" }
-                                    .joinToString { it.name }
+                    val tvCredits = apiResponse.response.body()
+                    if (tvCredits != null){
+                        _tvCreditsFlow.value = DataState.Success(
+                            TvSeriesUICredits(
+                                cast = tvCredits.cast,
                             )
                         )
                     }
                 }
 
                 is ApiResult.Error -> {
-                    DataState.Error(Exception(MovieDetailScreenViewModel.ErrorMessages.GENERIC_ERROR))
+                    _tvCreditsFlow.value = DataState.Error(Exception("Data cannot be fetched!"))
                 }
             }
+        }
+    }
+
+    fun createProfileImageUrl(profilePath: String?): String {
+        val baseUrl = Constants.IMAGE_URL
+        return if (!profilePath.isNullOrBlank()) {
+            "$baseUrl$profilePath"
+        } else {
+            "${R.drawable.movies_dummy}"
         }
     }
 }
