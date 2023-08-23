@@ -2,7 +2,7 @@ package com.example.myapplication.data.model.moviesmodel
 
 import com.google.gson.annotations.SerializedName
 
-data class Result(
+data class ResultDto(
     @SerializedName("adult")
     val adult: Boolean,
     @SerializedName("backdrop_path")
@@ -30,5 +30,5 @@ data class Result(
     @SerializedName("vote_average")
     val voteAverage: Double,
     @SerializedName("vote_count")
-    val vote_count: Int
+    val voteCount: Int
 )

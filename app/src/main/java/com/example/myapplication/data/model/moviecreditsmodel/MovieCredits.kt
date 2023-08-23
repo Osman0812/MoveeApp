@@ -2,11 +2,11 @@ package com.example.myapplication.data.model.moviecreditsmodel
 
 import com.google.gson.annotations.SerializedName
 
-data class MovieCreditsModel(
+data class MovieCreditsDto(
     @SerializedName("cast")
-    val cast: List<Cast>,
+    val cast: List<CastDto>,
     @SerializedName("crew")
-    val crew: List<Crew>,
+    val crew: List<CrewDto>,
     @SerializedName("id")
     val id: Int
 )

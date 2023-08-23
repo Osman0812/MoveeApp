@@ -2,17 +2,17 @@ package com.example.myapplication.data.model.singlemoviemodel
 
 import com.google.gson.annotations.SerializedName
 
-data class SingleMovieModel(
+data class SingleMovieDto(
     @SerializedName("adult")
     val adult: Boolean,
     @SerializedName("backdrop_path")
     val backdropPath: String,
     @SerializedName("belongs_to_collection")
-    val belongsToCollection: BelongsToCollection,
+    val belongsToCollection: BelongsToCollectionDto,
     @SerializedName("budget")
     val budget: Int,
     @SerializedName("genres")
-    val genres: List<Genre>,
+    val genres: List<GenreDto>,
     @SerializedName("homepage")
     val homepage: String,
     @SerializedName("id")
@@ -30,9 +30,9 @@ data class SingleMovieModel(
     @SerializedName("poster_path")
     val posterPath: String,
     @SerializedName("production_companies")
-    val productionCompanies: List<ProductionCompany>,
+    val productionCompanies: List<ProductionCompanyDto>,
     @SerializedName("production_countries")
-    val productionCountries: List<ProductionCountry>,
+    val productionCountries: List<ProductionCountryDto>,
     @SerializedName("release_date")
     val releaseDate: String,
     @SerializedName("revenue")
@@ -40,7 +40,7 @@ data class SingleMovieModel(
     @SerializedName("runtime")
     val runtime: Int,
     @SerializedName("spoken_languages")
-    val spokenLanguages: List<SpokenLanguage>,
+    val spokenLanguages: List<SpokenLanguageDto>,
     @SerializedName("status")
     val status: String,
     @SerializedName("tagline")

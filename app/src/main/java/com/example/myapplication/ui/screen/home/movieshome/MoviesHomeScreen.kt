@@ -24,8 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -36,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,59 +49,70 @@ import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.example.myapplication.R
-import com.example.myapplication.data.model.genresmodel.Genre
+import com.example.myapplication.data.model.genresmodel.GenreDto
 import com.example.myapplication.graphs.MoviesScreens
 import com.example.myapplication.ui.components.IndicatorLine
+import com.example.myapplication.ui.screen.home.moviedetail.CircularProgress
 import com.example.myapplication.util.Constants
 import com.example.myapplication.util.state.DataState
 
 @Composable
 fun MoviesHomeScreen(
     viewModel: MoviesHomeScreenViewModel = hiltViewModel(),
-    navHostController: NavHostController) {
+    navHostController: NavHostController
+) {
     val scrollState = rememberScrollState()
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp
-    val genres = viewModel.allGenresFlow.collectAsState()
+    val genres = viewModel.allGenresFlow.collectAsState().value
 
     Background(
         if (scrollState.value <= scrollState.maxValue / 2) {
-            Modifier.background(color = Color(0xE6003DFF))
+            Modifier.background(color = colorResource(id = R.color.blue))
         } else {
             Modifier.background(color = Color.White)
         }
     )
-    Column(
-        modifier = Modifier
-            .padding(32.dp)
-            .verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Text(
-            text = stringResource(id = R.string.movies_home_screen_movies_title),
-            fontWeight = FontWeight.Bold,
-            fontSize = 34.sp,
-            color = Color.White
-        )
-        PlayingMoviesList(
-            viewModel = viewModel,
-            genres = genres,
-            navHostController = navHostController
-        )
 
+    when (genres) {
+        is DataState.Loading ->
+            CircularProgress()
 
-        PopularMovies(
-            modifier = Modifier
-                .height((screenHeight / 2).dp),
-            navHostController = navHostController,
-            viewModel = viewModel,
-            genres = genres
-        )
+        is DataState.Success -> {
+            Column(
+                modifier = Modifier
+                    .padding(32.dp)
+                    .verticalScroll(scrollState),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.movies_home_screen_movies_title),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 34.sp,
+                    color = Color.White
+                )
+                PlayingMoviesList(
+                    viewModel = viewModel,
+                    genres = genres.data,
+                    navHostController = navHostController
+                )
+
+                PopularMovies(
+                    modifier = Modifier
+                        .height((screenHeight / 2).dp),
+                    navHostController = navHostController,
+                    viewModel = viewModel,
+                    genres = genres.data
+                )
+            }
+        }
+
+        is DataState.Error -> {}
     }
 }
 
 @Composable
-private fun Background(modifier: Modifier = Modifier) {
+fun Background(modifier: Modifier = Modifier) {
     Column {
         Box(
             modifier = modifier
@@ -116,7 +126,6 @@ private fun Background(modifier: Modifier = Modifier) {
                 .weight(2.5f)
                 .background(color = Color.White)
         )
-
     }
 }
 
@@ -124,7 +133,7 @@ private fun Background(modifier: Modifier = Modifier) {
 private fun PlayingMoviesList(
     modifier: Modifier = Modifier,
     viewModel: MoviesHomeScreenViewModel,
-    genres: State<DataState<List<Genre>>>,
+    genres: List<GenreDto>,
     navHostController: NavHostController
 ) {
     val lazyRowState = rememberLazyListState()
@@ -133,30 +142,17 @@ private fun PlayingMoviesList(
     val currentTitle = remember { mutableStateOf("") }
     val currentAverage = remember { mutableStateOf("") }
     val currentGenres = remember { mutableStateOf("") }
-    val currentFirstItem = lazyRowState.firstVisibleItemIndex
     val configuration = LocalConfiguration.current
     val screenWith = configuration.screenWidthDp
 
-
     if (movies.itemCount > 0) {
         currentTitle.value = movies.itemSnapshotList.items[scrollIndex.value].title
-        currentAverage.value = movies.itemSnapshotList.items[scrollIndex.value].voteAverage.toString()
-
-        LaunchedEffect(currentFirstItem) {
-            currentGenres.value = ""
-            when (genres.value) {
-                is DataState.Loading -> {}
-                is DataState.Success -> {
-                    val genre = (genres.value as DataState.Success<List<Genre>>).data
-                    currentGenres.value = getMovieGenre(
-                        genre,
-                        movies.itemSnapshotList.items[scrollIndex.value].genreIds
-                    )
-                }
-
-                is DataState.Error -> {}
-            }
-        }
+        currentAverage.value =
+            movies.itemSnapshotList.items[scrollIndex.value].voteAverage.toString()
+        currentGenres.value = getMovieGenre(
+            genres,
+            movies.itemSnapshotList.items[scrollIndex.value].genreIds
+        )
     }
 
     LazyRow(
@@ -166,17 +162,19 @@ private fun PlayingMoviesList(
         state = lazyRowState
     ) {
         items(movies.itemCount) { movie ->
-            SingleMovieImage(
-                modifier = Modifier
-                    .width((screenWith * 0.7).dp)
-                    .height(screenWith.dp)
-                    .clip(shape = RoundedCornerShape(15.dp))
-                    .clickable {
-                        val movieId = movies[movie]!!.id
-                        navHostController.navigate("${MoviesScreens.MovieDetailScreen.route}/$movieId")
-                    },
-                imagePath = movies[movie]!!.posterPath
-            )
+            movies[movie]?.let {
+                SingleMovieImage(
+                    modifier = Modifier
+                        .width((screenWith * 0.7).dp)
+                        .height(screenWith.dp)
+                        .clip(shape = RoundedCornerShape(15.dp))
+                        .clickable {
+                            val movieId = movies[movie]?.id
+                            navHostController.navigate("${MoviesScreens.MovieDetailScreen.route}/$movieId")
+                        },
+                    imagePath = it.posterPath
+                )
+            }
         }
     }
 
@@ -227,7 +225,7 @@ private fun SingleMovieInfo(
         )
         Text(
             text = genres,
-            fontSize = 15.sp
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 15.sp)
 
         )
         IndicatorLine(
@@ -243,7 +241,7 @@ private fun PopularMovies(
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
     viewModel: MoviesHomeScreenViewModel,
-    genres: State<DataState<List<Genre>>>
+    genres: List<GenreDto>
 ) {
     val popularMovies = viewModel.moviesPopularFlow.collectAsLazyPagingItems()
     val movieGenre = remember { mutableStateOf("") }
@@ -254,7 +252,7 @@ private fun PopularMovies(
     ) {
         Text(
             text = stringResource(id = R.string.movies_home_screen_movies_popular),
-            fontSize = 22.sp,
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 22.sp),
             fontWeight = FontWeight.Bold
         )
 
@@ -265,28 +263,21 @@ private fun PopularMovies(
             contentPadding = PaddingValues(bottom = 10.dp)
         ) {
             items(popularMovies.itemCount) { movie ->
-                when (genres.value) {
-                    is DataState.Loading -> {}
-                    is DataState.Success -> {
-                        val genre = (genres.value as DataState.Success<List<Genre>>).data
-                        movieGenre.value = getMovieGenre(
-                            genre,
-                            popularMovies.itemSnapshotList[movie]?.genreIds ?: emptyList()
-                        )
-                    }
 
-                    is DataState.Error -> {}
-                }
+                movieGenre.value = getMovieGenre(
+                    genres,
+                    popularMovies.itemSnapshotList[movie]?.genreIds ?: emptyList()
+                )
 
                 SinglePopularMovie(
                     modifier = Modifier,
-                    navHostController=navHostController,
-                    imagePath = popularMovies[movie]!!.posterPath,
-                    movieName = popularMovies[movie]!!.title,
+                    navHostController = navHostController,
+                    imagePath = popularMovies[movie]?.posterPath.toString(),
+                    movieName = popularMovies[movie]?.title.toString(),
                     genre = movieGenre.value,
-                    voteAverage = popularMovies[movie]!!.voteAverage.toString(),
-                    date = popularMovies[movie]!!.releaseDate,
-                    movieId = popularMovies[movie]!!.id.toString()
+                    voteAverage = popularMovies[movie]?.voteAverage.toString(),
+                    date = popularMovies[movie]?.releaseDate.toString(),
+                    movieId = popularMovies[movie]?.id.toString()
                 )
             }
         }
@@ -399,7 +390,8 @@ private fun MovieRate(modifier: Modifier = Modifier, fontSize: Int, rate: String
         )
     }
 }
-private fun getMovieGenre(movieGenreList: List<Genre>, allGenreList: List<Int>): String {
+
+private fun getMovieGenre(movieGenreList: List<GenreDto>, allGenreList: List<Int>): String {
     val matchingGenres = movieGenreList.filter { it.id in allGenreList }
     return matchingGenres.joinToString(separator = ", ") { it.name }
 }

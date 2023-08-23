@@ -2,13 +2,13 @@ package com.example.myapplication.data.model.moviesmodel
 
 import com.google.gson.annotations.SerializedName
 
-data class MoviesModel(
+data class MoviesDto(
     @SerializedName("dates")
-    val dates: Dates,
+    val dates: DatesDto,
     @SerializedName("page")
     val page: Int,
     @SerializedName("results")
-    val results: List<Result>,
+    val results: List<ResultDto>,
     @SerializedName("total_pages")
     val totalPages: Int,
     @SerializedName("total_results")

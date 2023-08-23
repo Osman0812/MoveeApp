@@ -43,7 +43,7 @@ fun HomeNavGraph(
             )
 
         }
-        composable(route = "${TvsScreens.TvSeriesDetailScreen.route}/{series_id}") { backStackEntry ->
+        composable(route = "${TvSeriesDetailScreens.TvSeriesDetailScreen.route}/{series_id}") { backStackEntry ->
             val seriesId = backStackEntry.arguments?.getString("series_id")
             TvDetailScreen(
                 seriesId = seriesId!!.toInt(),
@@ -55,12 +55,11 @@ fun HomeNavGraph(
         }
     }
 }
-
 sealed class MoviesScreens(val route: String) {
     object MovieDetailScreen : MoviesScreens(route = "MOVIE_DETAIL")
 }
-sealed class TvsScreens(val route: String) {
-    object TvSeriesDetailScreen : TvsScreens(route = "TV_SERIES_DETAIL")
+sealed class TvSeriesDetailScreens(val route: String) {
+    object TvSeriesDetailScreen : TvSeriesDetailScreens(route = "TV_SERIES_DETAIL")
 }
 sealed class ActorScreens(val route: String) {
     object ActorDetailScreen : ActorScreens(route = "ACTOR_DETAIL")

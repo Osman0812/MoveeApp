@@ -2,34 +2,29 @@ package com.example.myapplication.ui.screen.home.tvdetail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,71 +32,71 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
-import com.example.myapplication.data.model.singletvmodel.TvSeriesDetailModel
-import com.example.myapplication.data.model.tvseriescreditsmodel.TvSeriesCreditsModel
-import com.example.myapplication.graphs.ActorScreens
-import com.example.myapplication.graphs.MoviesScreens
 import com.example.myapplication.ui.components.IndicatorLine
+import com.example.myapplication.ui.screen.home.moviedetail.MovieDetailScreenViewModel
+import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesDiretorsUiModel
+import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesUiModel
 import com.example.myapplication.ui.screen.home.tvseries.TvSeriesRate
 import com.example.myapplication.util.Constants
 import com.example.myapplication.util.state.DataState
 
 @Composable
-fun TvDetailScreen(
-    seriesId: Int,
-    navHostController: NavHostController
-) {
-
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp
+fun TvDetailScreen(seriesId: Int) {
     val viewModel = hiltViewModel<TvDetailScreenViewModel>()
     val scrollState = rememberScrollState()
-    val tvInfo = viewModel.singleTvInfoFlow.collectAsState()
-    val tvCredits = viewModel.tvCreditsFlow.collectAsState()
+    val tvInfo = viewModel.singleTvInfoFlow.collectAsState().value
+    val tvSummary = viewModel.tvDirectorsFlow.collectAsState().value
     viewModel.getSingleTvInfo(seriesId)
-    viewModel.getTvSeriesCredit(seriesId)
+    viewModel.getTvSeriesWriters(seriesId)
 
-    when (tvInfo.value) {
+    when (tvInfo) {
         is DataState.Loading -> {
             CircularProgress()
         }
 
         is DataState.Success -> {
+            val tvSeries = tvInfo.data
+            var summary = TvSeriesDiretorsUiModel()
+            when (tvSummary) {
+                is DataState.Success -> {
+                    summary = tvSummary.data
+                }
+
+                else -> TvSeriesDiretorsUiModel()
+            }
+
             Column(
                 modifier = Modifier
                     .verticalScroll(scrollState)
                     .padding(bottom = 10.dp)
             ) {
-                TvCover(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height((screenHeight / 2.20).dp),
-                    tvInfo = tvInfo
-                )
+                tvSeries.tvPosterPath?.let { image ->
+                    tvSeries.tvVoteAverage?.let { vote ->
+                        TvCover(
+                            modifier = Modifier,
+                            imagePath = image,
+                            tvRate = vote
+                        )
+                    }
+                }
                 TvSeriesInfo(
                     modifier = Modifier
                         .padding(start = 32.dp, end = 32.dp, top = 8.dp),
-                    tvInfo = tvInfo
+                    tvSeriesUiModel = tvSeries
                 )
                 TvSeriesSummary(
                     modifier = Modifier
                         .padding(start = 32.dp, end = 32.dp, top = 16.dp),
-                    tvInfo = tvInfo,
-                    tvCredits = tvCredits,
-                    viewModel = viewModel,
-                    navHostController = navHostController
+                    tvSeriesUiModel = tvSeries,
+                    tvSeriesWritersUiModel = summary,
                 )
-
             }
         }
 
         is DataState.Error -> {
-            Text("An error occurred! Please try again!")
+            DataState.Error(Exception(MovieDetailScreenViewModel.ErrorMessages.GENERIC_ERROR))
         }
     }
 }
@@ -109,29 +104,29 @@ fun TvDetailScreen(
 @Composable
 fun TvCover(
     modifier: Modifier = Modifier,
-    tvInfo: State<DataState<TvSeriesDetailModel>>
+    imagePath: String,
+    tvRate: String
 ) {
-    val imagePath = (tvInfo.value as DataState.Success).data.poster_path
     val asyncImage = Constants.IMAGE_URL + imagePath
     Box(modifier = modifier) {
         AsyncImage(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
             model = asyncImage,
             placeholder = painterResource(id = R.drawable.movies_dummy),
-            contentDescription = "null",
-            contentScale = ContentScale.FillWidth
+            contentDescription = "dummy_image",
+            contentScale = ContentScale.Crop
         )
         TvSeriesRate(
-            modifier = Modifier
+            modifier = modifier
                 .align(Alignment.BottomStart)
                 .padding(start = 30.dp, top = 10.dp)
                 .size(60.dp, 25.dp)
                 .clip(shape = RoundedCornerShape(20.dp))
                 .background(color = Color.Blue),
             fontSize = 12,
-            rate = "8.9"
+            rate = tvRate
         )
     }
 }
@@ -150,28 +145,27 @@ private fun CircularProgress() {
 @Composable
 private fun TvSeriesInfo(
     modifier: Modifier = Modifier,
-    tvInfo: State<DataState<TvSeriesDetailModel>>
+    tvSeriesUiModel: TvSeriesUiModel
 ) {
-    val tvSeriesName = (tvInfo.value as DataState.Success).data.name
-    val tvSeriesGenresList = (tvInfo.value as DataState.Success).data.genres
-    val tvSeriesDuration =
-        (tvInfo.value as DataState.Success).data.episode_run_time.getOrNull(0).toString()
-    val tvSeriesReleaseDate = (tvInfo.value as DataState.Success).data.first_air_date
-    val movieGenre = tvSeriesGenresList.joinToString(separator = ", ") { it.name }
+    val tvSeriesGenre = tvSeriesUiModel.tvGenres?.joinToString(separator = ", ") { it.name }
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(
-            text = tvSeriesName,
-            style = MaterialTheme.typography.displayLarge
-        )
-        Text(
-            text = movieGenre,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Normal,
-            color = Color.Black
-        )
+        tvSeriesUiModel.tvTitle?.let {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.displayLarge
+            )
+        }
+        if (tvSeriesGenre != null) {
+            Text(
+                text = tvSeriesGenre,
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 15.sp),
+                fontWeight = FontWeight.Normal,
+                color = Color.Black
+            )
+        }
         Row(
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
@@ -183,10 +177,12 @@ private fun TvSeriesInfo(
                     painter = painterResource(id = R.drawable.ic_duration),
                     contentDescription = "Duration Icon"
                 )
-                Text(
-                    text = "$tvSeriesDuration min",
-                    fontSize = 15.sp,
-                )
+                if (tvSeriesUiModel.tvDuration.toString() != "null") {
+                    Text(
+                        text = "${tvSeriesUiModel.tvDuration?.firstOrNull()} min",
+                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 15.sp)
+                    )
+                }
             }
             Text(
                 text = "|",
@@ -199,10 +195,12 @@ private fun TvSeriesInfo(
                     painter = painterResource(id = R.drawable.ic_calendar),
                     contentDescription = "Calendar Icon"
                 )
-                Text(
-                    text = tvSeriesReleaseDate,
-                    fontSize = 15.sp,
-                )
+                tvSeriesUiModel.tvReleaseDate?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.titleLarge.copy(fontSize = 15.sp)
+                    )
+                }
             }
         }
         IndicatorLine(
@@ -217,43 +215,28 @@ private fun TvSeriesInfo(
 @Composable
 private fun TvSeriesSummary(
     modifier: Modifier = Modifier,
-    tvInfo: State<DataState<TvSeriesDetailModel>>,
-    tvCredits: State<DataState<TvSeriesCreditsModel>>,
-    viewModel: TvDetailScreenViewModel,
-    navHostController: NavHostController
+    tvSeriesUiModel: TvSeriesUiModel,
+    tvSeriesWritersUiModel: TvSeriesDiretorsUiModel
 ) {
-    val tvOverView = (tvInfo.value as DataState.Success).data.overview
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = tvOverView,
-            fontSize = 17.sp,
+            text = tvSeriesUiModel.tvOverview.toString(),
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 17.sp)
         )
-        when (tvInfo.value) {
-            is DataState.Loading -> {
-                CircularProgress()
-            }
 
-            is DataState.Success -> {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    val labelCreator = stringResource(id = R.string.tv_series_detail_screen_creator)
-                    val seasonsList = (tvInfo.value as DataState.Success).data.number_of_seasons
-                    val creators = (tvInfo.value as DataState.Success).data.created_by
-                    SeasonsView("$seasonsList seasons")
-                    val director = creators.joinToString {
-                        it.name
-                    }
-                    TvSummaryExtension(labelName = labelCreator, name = director)
-                    Actors(tvCredits, viewModel, navHostController)
-                }
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            val labelCreator = stringResource(id = R.string.tv_series_detail_screen_creator)
+            tvSeriesWritersUiModel.director?.let {
+                TvSummaryExtension(labelName = labelCreator, name = it)
             }
-
-            is DataState.Error -> {
-                Text("Data error!")
+            tvSeriesUiModel.tvNumberOfSeasons?.let {
+                SeasonsView("$it seasons")
             }
         }
     }
@@ -266,12 +249,12 @@ private fun TvSummaryExtension(labelName: String, name: String) {
     ) {
         Text(
             text = labelName,
-            fontSize = 17.sp
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 17.sp)
         )
         Text(
             text = name,
-            fontSize = 17.sp,
-            color = Color(0xff003dff)
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 17.sp),
+            color = colorResource(id = R.color.blue)
         )
     }
 }
@@ -288,109 +271,19 @@ fun SeasonsView(
     ) {
         Text(
             text = text,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 14.sp),
             modifier = Modifier
-                .size(width = 90.dp, height = 24.dp)
-                .padding(start = 3.dp)
-                .fillMaxWidth()
-                .align(Alignment.Center),
+                .align(Alignment.Center)
+                .padding(2.dp),
             color = Color.White
         )
     }
 }
 
-@Composable
-fun Actors(
-    tvCredits: State<DataState<TvSeriesCreditsModel>>,
-    viewModel: TvDetailScreenViewModel,
-    navHostController: NavHostController
-) {
-    val scrollState = rememberScrollState()
-    Column(
-        verticalArrangement = Arrangement.SpaceEvenly
-    ) {
-        Text(
-            text = stringResource(id = R.string.tv_series_cast),
-            fontSize = 20.sp,
-            color = Color.Black,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.padding(top = 10.dp))
-        Row(
-            modifier = Modifier
-                .horizontalScroll(scrollState),
-            horizontalArrangement = Arrangement.spacedBy(30.dp)
-        ) {
-            when (tvCredits.value) {
-                is DataState.Loading -> {
-                }
-
-                is DataState.Success -> {
-                    val castList = (tvCredits.value as DataState.Success).data.cast
-                    for (actor in castList) {
-                        Column(
-                            verticalArrangement = Arrangement.SpaceEvenly
-                        ) {
-                            val profileImageUrl =
-                                viewModel.createProfileImageUrl(actor.profile_path)
-                            ActorCircle(
-                                photoUrl = profileImageUrl,
-                                actorName = actor.name,
-                                actorId = actor.id,
-                                navHostController = navHostController
-                            )
-                        }
-                    }
-                }
-
-                is DataState.Error -> {
-                    Text("Data error!")
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun ActorCircle(
-    photoUrl: String,
-    actorName: String,
-    actorId: Int,
-    navHostController: NavHostController
-) {
-    val circleSize = 80.dp
-    Column(
-        verticalArrangement = Arrangement.spacedBy(5.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .padding(start = 10.dp)
-                .size(circleSize)
-                .background(
-                    color = Color.Transparent,
-                    shape = CircleShape
-                )
-        ) {
-            Image(
-                painter = rememberAsyncImagePainter(model = photoUrl),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(CircleShape)
-                    .clickable {
-                        navHostController.navigate("${ActorScreens.ActorDetailScreen.route}/$actorId")
-                    }
-            )
-        }
-    }
-    Text(text = actorName)
-}
-
 @Preview
 @Composable
 fun TvSeriesDetailScreenPreview() {
-    TvDetailScreen(0, rememberNavController())
+    TvDetailScreen(0)
 }
 
 

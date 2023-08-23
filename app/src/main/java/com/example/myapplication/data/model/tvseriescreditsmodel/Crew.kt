@@ -1,15 +1,28 @@
 package com.example.myapplication.data.model.tvseriescreditsmodel
 
-data class Crew(
+import com.google.gson.annotations.SerializedName
+
+data class CrewDto(
+    @SerializedName("adult")
     val adult: Boolean,
-    val credit_id: String,
+    @SerializedName("credit_id")
+    val creditId: String,
+    @SerializedName("department")
     val department: String,
+    @SerializedName("gender")
     val gender: Int,
+    @SerializedName("id")
     val id: Int,
+    @SerializedName("job")
     val job: String,
-    val known_for_department: String,
+    @SerializedName("known_for_department")
+    val knownForDepartment: String,
+    @SerializedName("name")
     val name: String,
-    val original_name: String,
+    @SerializedName("original_name")
+    val originalName: String,
+    @SerializedName("popularity")
     val popularity: Double,
-    val profile_path: String
+    @SerializedName("profile_path")
+    val profilePath: String
 )

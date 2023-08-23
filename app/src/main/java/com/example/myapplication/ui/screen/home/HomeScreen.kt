@@ -45,9 +45,7 @@ fun HomeScreen(
         ) {
         HomeNavGraph(
             navController = navController,
-            )
-
-
+        )
     }
 }
 
@@ -57,10 +55,8 @@ private fun BottomBar(navController: NavHostController) {
         BottomBarScreen.Movies,
         BottomBarScreen.TvSeries
     )
-
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-
     val bottomBarDestination = screens.any { it.route == currentDestination?.route }
     if (bottomBarDestination) {
         BottomNavigation(
@@ -68,8 +64,7 @@ private fun BottomBar(navController: NavHostController) {
                 .border(
                     width = 0.5.dp,
                     color = Color.Gray,
-
-                    ),
+                ),
             backgroundColor = Color.White
         ) {
             screens.forEach { screen ->
@@ -89,7 +84,6 @@ fun RowScope.AddItem(
     currentDestination: NavDestination?,
     navController: NavHostController
 ) {
-
     val isSelected = currentDestination?.hierarchy?.any {
         it.route == screen.route
     } == true
@@ -98,16 +92,15 @@ fun RowScope.AddItem(
         icon = {
             if (!isSelected) {
                 Image(
-                    painter = painterResource(id = screen.icon),
+                    painter = painterResource(id = screen.unselectedIcon),
                     contentDescription = "Navigation Icon"
                 )
             } else {
                 Image(
                     painter = painterResource(id = screen.selectedIcon),
-                    contentDescription = "Navigation Icon"
+                    contentDescription = "Selected Navigation Icon"
                 )
             }
-
         },
         selected = isSelected,
         unselectedContentColor = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),

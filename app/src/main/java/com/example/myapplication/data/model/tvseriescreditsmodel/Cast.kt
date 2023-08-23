@@ -1,15 +1,28 @@
 package com.example.myapplication.data.model.tvseriescreditsmodel
 
-data class Cast(
+import com.google.gson.annotations.SerializedName
+
+data class CastDto(
+    @SerializedName("adult")
     val adult: Boolean,
+    @SerializedName("character")
     val character: String,
-    val credit_id: String,
+    @SerializedName("credit_id")
+    val creditId: String,
+    @SerializedName("gender")
     val gender: Int,
+    @SerializedName("id")
     val id: Int,
-    val known_for_department: String,
+    @SerializedName("known_for_department")
+    val knownForDepartment: String,
+    @SerializedName("name")
     val name: String,
+    @SerializedName("order")
     val order: Int,
-    val original_name: String,
+    @SerializedName("original_name")
+    val originalName: String,
+    @SerializedName("popularity")
     val popularity: Double,
-    val profile_path: String
+    @SerializedName("profile_path")
+    val profilePath: String
 )
