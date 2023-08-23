@@ -3,7 +3,6 @@ package com.example.myapplication.ui.screen.login
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,16 +27,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -50,18 +46,25 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.myapplication.R
-import com.example.myapplication.data.remote.model.ValidationRequest
-import com.example.myapplication.ui.Screen
+import com.example.myapplication.data.datastore.SessionManagerDataStore
+import com.example.myapplication.data.model.authmodel.ValidationRequest
+import com.example.myapplication.graphs.AuthScreen
+import com.example.myapplication.graphs.Graph
+import com.example.myapplication.ui.components.IndicatorLine
 import com.example.myapplication.ui.theme.bottomViewColor
 import com.example.myapplication.ui.theme.vibrantBlue
-import com.example.myapplication.data.datastore.SessionManagerDataStore
-import com.example.myapplication.util.extension.Constants
-import com.example.myapplication.util.extension.ResultOf
+import com.example.myapplication.util.Constants
+import com.example.myapplication.util.state.ResultOf
 
 @Composable
-fun LoginScreen(authViewModel: LoginViewModel, navHostController: NavHostController) {
+fun LoginScreen(
+    viewModel: LoginViewModel = hiltViewModel(),
+    navHostController: NavHostController,
+) {
     LoginScreenBackground()
     Column(
         modifier = Modifier
@@ -79,7 +82,7 @@ fun LoginScreen(authViewModel: LoginViewModel, navHostController: NavHostControl
         Spacer(modifier = Modifier.padding(5.dp))
         ForgotPasswordText(navHostController)
         Spacer(modifier = Modifier.padding(40.dp))
-        LoginButton(authViewModel, userName, password, navHostController)
+        LoginButton(viewModel, userName, password, navHostController)
         Spacer(modifier = Modifier.padding(bottom = 25.dp))
         BottomView(navHostController)
     }
@@ -210,7 +213,9 @@ private fun ForgotPasswordText(navHostController: NavHostController) {
         modifier = Modifier.fillMaxWidth(),
         text = AnnotatedString(stringResource(id = R.string.forgot_password)),
         onClick = {
-            navHostController.navigate("${Screen.WebViewScreen.route}/${Constants.FORGOT_PASSWORD_URL}")
+            navHostController.navigate("${AuthScreen.WebView.route}/${Constants.FORGOT_PASSWORD_URL}")
+
+
         },
         style = TextStyle(
             color = Color.White,
@@ -235,15 +240,18 @@ private fun LoginButton(
             is ResultOf.Initial -> {
                 isLoading = false
             }
+
             is ResultOf.Loading -> {
                 isLoading = true
             }
+
             is ResultOf.Success -> {
                 println(validation.toString())
                 saveSessionId(context, validation.toString())
                 navigationToMainScreen(navHostController)
                 isLoading = false
             }
+
             is ResultOf.Error -> {
                 Toast.makeText(context, "Failed!", Toast.LENGTH_LONG).show()
                 isLoading = false
@@ -309,7 +317,7 @@ private fun BottomView(navHostController: NavHostController) {
         ClickableText(
             text = AnnotatedString(stringResource(id = R.string.register_now)),
             onClick = {
-                navHostController.navigate("${Screen.WebViewScreen.route}/${Constants.REGISTER_URL}")
+                navHostController.navigate("${AuthScreen.WebView.route}/${Constants.REGISTER_URL}")
             },
             style = TextStyle(
                 color = Color.White,
@@ -320,23 +328,9 @@ private fun BottomView(navHostController: NavHostController) {
     }
 }
 
-@Composable
-private fun IndicatorLine(modifier: Modifier = Modifier) {
-    Canvas(
-        modifier = modifier
-    ) {
-        drawLine(
-            color = Color(0x4cabb4bd),
-            start = Offset(0f, 0f),
-            end = Offset(size.width, 0f),
-            strokeWidth = 1.dp.toPx(),
-            cap = StrokeCap.Butt
-        )
-    }
-}
-
 private fun navigationToMainScreen(navHostController: NavHostController) {
-    navHostController.navigate(Screen.MainScreen.route)
+    navHostController.popBackStack()
+    navHostController.navigate(Graph.HOME)
 }
 
 private suspend fun saveSessionId(context: Context, sessionId: String) {

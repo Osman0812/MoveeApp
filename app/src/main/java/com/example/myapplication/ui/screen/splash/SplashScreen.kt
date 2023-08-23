@@ -24,22 +24,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.myapplication.R
-import com.example.myapplication.ui.Screen
+import com.example.myapplication.graphs.AuthScreen
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navHostController: NavHostController){
+fun SplashScreen(navHostController: NavHostController) {
     SplashScreenBackground()
     SplashScreenLogo()
     SplashScreenBottomView()
     NavigationToLoginScreen(navHostController = navHostController)
 }
+
 @Composable
-private fun SplashScreenLogo(){
+private fun SplashScreenLogo() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
-    ){
+    ) {
         Image(
             painter = painterResource(id = R.drawable.ic_logo),
             contentDescription = "content_description_logo",
@@ -51,8 +52,8 @@ private fun SplashScreenLogo(){
 }
 
 @Composable
-private fun SplashScreenBackground(){
-    Box(modifier = Modifier.fillMaxSize(),) {
+private fun SplashScreenBackground() {
+    Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.ic_splash_background),
             contentDescription = "content_description_splash_screen_background",
@@ -63,9 +64,10 @@ private fun SplashScreenBackground(){
 }
 
 @Composable
-private fun SplashScreenBottomView(){
-    Box(modifier = Modifier
-        .fillMaxSize(),
+private fun SplashScreenBottomView() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
     ) {
         Row(
@@ -89,8 +91,9 @@ private fun SplashScreenBottomView(){
         }
     }
 }
+
 @Composable
-private fun NavigationToLoginScreen(navHostController: NavHostController){
+private fun NavigationToLoginScreen(navHostController: NavHostController) {
 
     val scale = remember {
         androidx.compose.animation.core.Animatable(0f)
@@ -106,8 +109,7 @@ private fun NavigationToLoginScreen(navHostController: NavHostController){
             )
         )
         delay(3000L)
-        navHostController.navigate(Screen.LoginScreen.route)
+        navHostController.popBackStack()
+        navHostController.navigate(AuthScreen.Login.route)
     }
-
-
 }

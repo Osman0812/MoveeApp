@@ -1,11 +1,21 @@
 <resources>
     <string name="app_name">My Application</string>
-    <string name="ic_we">Biz</string>
-    <string name="ic_movie">Film</string>
+    <string name="ic_we">We</string>
+    <string name="ic_movie">Movie</string>
+
+    //My Values
     <string name="email">Email</string>
-    <string name="password">Şifre</string>
-    <string name="forgot_password">Şifremi Unuttum?</string>
-    <string name="login">Giriş</string>
-    <string name="dont_have_an_account">Henüz bir hesabınız yok mu?</string>
-    <string name="register_now">Şimdi Kaydolun</string>
+    <string name="password">Password</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="login">Login</string>
+    <string name="dont_have_an_account">Don\'t have an account?</string>
+    <string name="register_now">Register Now</string>
+    <string name="movies_home_screen_movies_popular">Popular Movies</string>
+    <string name="movies_home_screen_movies_title">Movies</string>
+    <string name="movies_detail_screen_director">Director:</string>
+    <string name="movies_detail_screen_writers">Writers:</string>
+    <string name="movies_detail_screen_stars">Stars:</string>
+    <string name="tv_series_title">Tv Series</string>
+    <string name="tv_series_top_rated">Top Rated</string>
+    <string name="tv_series_detail_screen_creator">Creators:</string>
 </resources>

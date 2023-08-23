@@ -1,15 +1,12 @@
 package com.example.myapplication.ui.screen.login
 
-import androidx.compose.runtime.State
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myapplication.data.remote.model.ValidationCreateRequest
-import com.example.myapplication.data.remote.model.ValidationRequest
+import com.example.myapplication.data.model.authmodel.ValidationCreateRequest
+import com.example.myapplication.data.model.authmodel.ValidationRequest
 import com.example.myapplication.data.repository.AuthRepository
-import com.example.myapplication.util.extension.ApiResult
-import com.example.myapplication.util.extension.ResultOf
+import com.example.myapplication.util.state.ApiResult
+import com.example.myapplication.util.state.ResultOf
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
