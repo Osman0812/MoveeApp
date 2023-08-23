@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.myapplication.R
 import com.example.myapplication.ui.components.IndicatorLine
@@ -43,7 +44,7 @@ import com.example.myapplication.util.Constants
 import com.example.myapplication.util.state.DataState
 
 @Composable
-fun TvDetailScreen(seriesId: Int) {
+fun TvDetailScreen(seriesId: Int, navHostController: NavHostController) {
     val viewModel = hiltViewModel<TvDetailScreenViewModel>()
     val scrollState = rememberScrollState()
     val tvInfo = viewModel.singleTvInfoFlow.collectAsState().value
@@ -279,11 +280,3 @@ fun SeasonsView(
         )
     }
 }
-
-@Preview
-@Composable
-fun TvSeriesDetailScreenPreview() {
-    TvDetailScreen(0)
-}
-
-

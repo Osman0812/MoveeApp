@@ -3,9 +3,9 @@ package com.example.myapplication.ui.screen.home.actordetail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.data.model.actormodel.ActorDetailsModel
-import com.example.myapplication.data.model.moviecreditsmodel.Cast
-import com.example.myapplication.data.model.moviecreditsmodel.MovieCreditsModel
-import com.example.myapplication.data.model.singletvmodel.TvSeriesDetailModel
+import com.example.myapplication.data.model.moviecreditsmodel.CastDto
+import com.example.myapplication.data.model.moviecreditsmodel.MovieCreditsDto
+import com.example.myapplication.data.model.singletvmodel.TvSeriesDetailDto
 import com.example.myapplication.data.repository.ActorRepository
 import com.example.myapplication.data.repository.TvSeriesRepository
 import com.example.myapplication.util.state.ApiResult
