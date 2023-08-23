@@ -8,6 +8,8 @@ import com.example.myapplication.data.model.moviecreditsmodel.MovieCreditsDto
 import com.example.myapplication.data.model.singletvmodel.TvSeriesDetailDto
 import com.example.myapplication.data.repository.ActorRepository
 import com.example.myapplication.data.repository.TvSeriesRepository
+import com.example.myapplication.ui.screen.home.actordetail.actordetailsuimodel.ActorDetailsUIModel
+import com.example.myapplication.ui.screen.home.moviedetail.MovieDetailScreenViewModel
 import com.example.myapplication.util.state.ApiResult
 import com.example.myapplication.util.state.DataState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,18 +21,29 @@ import javax.inject.Inject
 @HiltViewModel
 class ActorDetailScreenViewModel @Inject constructor(private val actorRepository: ActorRepository) : ViewModel(){
     private val _singleActorInfoFlow =
-        MutableStateFlow<DataState<ActorDetailsModel>>(DataState.Loading)
-    val singleActorInfoFlow: StateFlow<DataState<ActorDetailsModel>> get() = _singleActorInfoFlow
+        MutableStateFlow<DataState<ActorDetailsUIModel>>(DataState.Loading)
+    val singleActorInfoFlow: StateFlow<DataState<ActorDetailsUIModel>> get() = _singleActorInfoFlow
     fun getSingleActorInfo(personId: Int) {
         viewModelScope.launch {
             when (val apiResponse = actorRepository.getActorDetails(personId)) {
                 is ApiResult.Success -> {
                     val actorInfo = apiResponse.response.body()
-                    _singleActorInfoFlow.value = DataState.Success(actorInfo!!)
+                    if (actorInfo != null){
+                        _singleActorInfoFlow.value = DataState.Success(
+                            ActorDetailsUIModel(
+                                profilePath = actorInfo.profilePath,
+                                placeOfBirth = actorInfo.placeOfBirth,
+                                birthday = actorInfo.birthday,
+                                biography = actorInfo.biography,
+                                name = actorInfo.name
+                            )
+                        )
+                    }
                 }
                 is ApiResult.Error -> {
                     _singleActorInfoFlow.value =
-                        DataState.Error(Exception("Data cannot be fetched!"))
+                     DataState.Error(Exception(MovieDetailScreenViewModel.ErrorMessages.GENERIC_ERROR))
+
                 }
             }
         }

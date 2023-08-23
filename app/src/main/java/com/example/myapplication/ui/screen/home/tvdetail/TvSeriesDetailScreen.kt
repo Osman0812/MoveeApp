@@ -2,6 +2,7 @@ package com.example.myapplication.ui.screen.home.tvdetail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,9 +35,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
+import com.example.myapplication.graphs.ActorScreens
+import com.example.myapplication.graphs.MoviesScreens
 import com.example.myapplication.ui.components.IndicatorLine
 import com.example.myapplication.ui.screen.home.moviedetail.MovieDetailScreenViewModel
 import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesUICredits
@@ -47,7 +51,7 @@ import com.example.myapplication.util.Constants
 import com.example.myapplication.util.state.DataState
 
 @Composable
-fun TvDetailScreen(seriesId: Int) {
+fun TvDetailScreen(seriesId: Int, navHostController: NavHostController) {
     val viewModel = hiltViewModel<TvDetailScreenViewModel>()
     val scrollState = rememberScrollState()
     val tvInfo = viewModel.singleTvInfoFlow.collectAsState().value
@@ -96,7 +100,12 @@ fun TvDetailScreen(seriesId: Int) {
                         .padding(start = 32.dp, end = 32.dp, top = 16.dp),
                     tvSeriesUiModel = tvSeries,
                 )
-                Actors(tvCredits = summary, viewModel = viewModel)
+
+                Actors(
+                    tvCredits = summary,
+                    viewModel = viewModel,
+                    navHostController = navHostController
+                )
             }
         }
 
@@ -293,6 +302,7 @@ fun SeasonsView(
 fun Actors(
     tvCredits: TvSeriesUICredits,
     viewModel: TvDetailScreenViewModel,
+    navHostController: NavHostController
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -316,8 +326,13 @@ fun Actors(
             if (castList != null) {
                 for (actor in castList) {
                     Column(
-                        verticalArrangement = Arrangement.SpaceEvenly
-                    ) {
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier
+                            .clickable {
+                                navHostController.navigate("${ActorScreens.ActorDetailScreen.route}/${actor.id}")
+                            },
+
+                        ) {
                         val profileImageUrl =
                             viewModel.createProfileImageUrl(actor.profilePath)
                         ActorCircle(
@@ -348,6 +363,7 @@ fun ActorCircle(
                     color = Color.Transparent,
                     shape = CircleShape
                 )
+
         ) {
             Image(
                 painter = rememberAsyncImagePainter(model = photoUrl),

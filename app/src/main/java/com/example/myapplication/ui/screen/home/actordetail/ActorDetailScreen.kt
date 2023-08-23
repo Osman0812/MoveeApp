@@ -34,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.myapplication.R
 import com.example.myapplication.data.model.actormodel.ActorDetailsModel
+import com.example.myapplication.ui.screen.home.actordetail.actordetailsuimodel.ActorDetailsUIModel
 import com.example.myapplication.ui.screen.home.moviedetail.CircularProgress
 import com.example.myapplication.ui.screen.home.moviedetail.StatusBarColor
 import com.example.myapplication.util.Constants
@@ -48,11 +49,11 @@ fun ActorDetailScreen(actorId: Int) {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp
     val viewModel = hiltViewModel<ActorDetailScreenViewModel>()
-    val actorInfo = viewModel.singleActorInfoFlow.collectAsState()
+    val actorInfo = viewModel.singleActorInfoFlow.collectAsState().value
     val scrollState = rememberScrollState()
     viewModel.getSingleActorInfo(actorId)
     StatusBarColor()
-    when (actorInfo.value) {
+    when (actorInfo) {
         is DataState.Loading -> {
             CircularProgress()
         }
@@ -67,9 +68,9 @@ fun ActorDetailScreen(actorId: Int) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height((screenHeight / 2.20).dp),
-                    actorInfo = actorInfo
+                    actorInfo = actorInfo.data
                 )
-                ActorInfo(actorInfo = actorInfo)
+                ActorInfo(actorInfo = actorInfo.data)
             }
         }
         is DataState.Error -> {
@@ -81,9 +82,9 @@ fun ActorDetailScreen(actorId: Int) {
 @Composable
 fun ActorCover(
     modifier: Modifier = Modifier,
-    actorInfo: State<DataState<ActorDetailsModel>>
+    actorInfo: ActorDetailsUIModel
 ) {
-    val imagePath = (actorInfo.value as DataState.Success).data.profile_path
+    val imagePath = actorInfo.profilePath
     val asyncImage = Constants.IMAGE_URL + imagePath
     Box(modifier = modifier) {
         AsyncImage(
@@ -92,7 +93,7 @@ fun ActorCover(
                 .padding(bottom = 10.dp),
             model = asyncImage,
             placeholder = painterResource(id = R.drawable.movies_dummy),
-            contentDescription = "null",
+            contentDescription = "dummy_image",
             contentScale = ContentScale.FillWidth
         )
     }
@@ -102,12 +103,12 @@ fun ActorCover(
 @Composable
 private fun ActorInfo(
     modifier: Modifier = Modifier,
-    actorInfo: State<DataState<ActorDetailsModel>>
+    actorInfo: ActorDetailsUIModel
 ) {
-    val actorName = (actorInfo.value as DataState.Success).data.name
-    val actorBiography = (actorInfo.value as DataState.Success).data.biography
-    val actorBirth = (actorInfo.value as DataState.Success).data.birthday
-    val actorBirthPlace = (actorInfo.value as DataState.Success).data.place_of_birth
+    val actorName = actorInfo.name
+    val actorBiography = actorInfo.biography
+    val actorBirth = actorInfo.birthday
+    val actorBirthPlace = actorInfo.placeOfBirth
     var expanded by remember { mutableStateOf(false) }
     val formatter = DateTimeFormatter.ofPattern("d MMMM", java.util.Locale.getDefault())
     val birthdateFormatted = try {
@@ -123,32 +124,38 @@ private fun ActorInfo(
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(
-            text = actorName,
-            style = MaterialTheme.typography.displayLarge
-        )
+        if (actorName != null) {
+            Text(
+                text = actorName,
+                style = MaterialTheme.typography.displayLarge
+            )
+        }
         val maxLines = if (expanded) Int.MAX_VALUE else 4
-        Text(
-            text = actorBiography,
-            maxLines = maxLines,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { expanded = !expanded }
-        )
-        if (!expanded && actorBiography.lineSequence().count() > maxLines) {
+        if (actorBiography != null) {
             Text(
-                text = "See full bio >>",
-                style = MaterialTheme.typography.bodyLarge.copy(color = Color.Blue),
-                modifier = Modifier.clickable { expanded = true }
+                text = actorBiography,
+                maxLines = maxLines,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded = !expanded }
             )
-        } else if (expanded) {
-            Text(
-                text = "See less >>",
-                style = MaterialTheme.typography.bodyLarge.copy(color = Color.Blue),
-                modifier = Modifier.clickable { expanded = false }
-            )
+        }
+        if (actorBiography != null) {
+            if (!expanded && actorBiography.lineSequence().count() > maxLines) {
+                Text(
+                    text = "See full bio >>",
+                    style = MaterialTheme.typography.bodyLarge.copy(color = Color.Blue),
+                    modifier = Modifier.clickable { expanded = true }
+                )
+            } else if (expanded) {
+                Text(
+                    text = "See less >>",
+                    style = MaterialTheme.typography.bodyLarge.copy(color = Color.Blue),
+                    modifier = Modifier.clickable { expanded = false }
+                )
+            }
         }
         Row(
             horizontalArrangement = Arrangement.spacedBy(5.dp)
