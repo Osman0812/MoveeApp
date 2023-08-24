@@ -57,7 +57,7 @@ fun HomeNavGraph(
         composable(route = "${ActorScreens.ActorDetailScreen.route}/{actor_id}") { backStackEntry ->
             val actorId = backStackEntry.arguments?.getString("actor_id")
             if (actorId != null) {
-                ActorDetailScreen(actorId = actorId.toInt())
+                ActorDetailScreen(actorId = actorId.toInt(), navController = navController)
             }
         }
     }
