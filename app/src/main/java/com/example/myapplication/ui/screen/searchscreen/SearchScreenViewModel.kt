@@ -33,7 +33,6 @@ class SearchScreenViewModel @Inject constructor(
     private val moviesRepository: MoviesRepository,
 ) : ViewModel() {
     var searchState = mutableStateOf("")
-
     private val _searchQuery = MutableStateFlow("")
     private val searchQuery: Flow<String> = _searchQuery.asStateFlow()
 
@@ -71,7 +70,6 @@ class SearchScreenViewModel @Inject constructor(
         if (searchValue.length < 4) {
             return
         }
-
         setQuery()
     }
 
@@ -124,7 +122,6 @@ class SearchScreenViewModel @Inject constructor(
     private suspend fun getTvCast(movieId: Int): String {
         return getTVCast(movieId, tvRepository::getTvSeriesCredits)
     }
-
 
     private fun getMediaTypeUiModel(type: String): MediaTypeUiModel {
         return when (type) {

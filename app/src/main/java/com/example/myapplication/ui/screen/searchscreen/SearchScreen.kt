@@ -41,7 +41,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -110,7 +109,7 @@ private fun SearchBar(
                     .clickable {},
                 text = stringResource(id = R.string.search_screen_cancel),
                 color = Color.White,
-                fontSize = 17.sp
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 17.sp),
             )
         }
     }
@@ -149,9 +148,7 @@ private fun SearchField(
                 value = viewModel.searchState.value,
                 onValueChange = { newValue -> viewModel.searchState.value = newValue },
                 singleLine = true,
-                textStyle = TextStyle(
-                    fontSize = 17.sp
-                )
+                textStyle = MaterialTheme.typography.titleLarge.copy(fontSize = 15.sp),
             )
         }
 
@@ -182,7 +179,7 @@ private fun SearchList(
     val searchState = viewModel.searchState
 
     LaunchedEffect(viewModel.searchState.value) {
-       viewModel.handleSearchStateChange(searchState.value)
+        viewModel.handleSearchStateChange(searchState.value)
     }
 
     LazyColumn(
@@ -313,7 +310,7 @@ private fun SingleSearchItem(
 
                 Text(
                     text = searchResult.itemDescription,
-                    fontSize = 15.sp,
+                    style = MaterialTheme.typography.titleLarge.copy(fontSize = 15.sp),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -354,8 +351,8 @@ private fun NotFound(modifier: Modifier) {
             text = stringResource(id = R.string.search_screen_result_not_found),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
-            color = Color(0xff0432ff)
+            style = MaterialTheme.typography.titleLarge.copy(fontSize = 18.sp),
+            color = colorResource(id = R.color.blue)
         )
 
     }
