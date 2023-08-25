@@ -12,6 +12,8 @@ import com.example.myapplication.ui.screen.home.movieshome.MoviesHomeScreenViewM
 import com.example.myapplication.ui.screen.home.tvseries.TvSeriesScreen
 import com.example.myapplication.ui.screen.home.tvseries.TvSeriesViewModel
 import com.example.myapplication.ui.screen.home.tvdetail.TvDetailScreen
+import com.example.myapplication.ui.screen.searchscreen.SearchScreen
+import com.example.myapplication.ui.screen.searchscreen.searchscreenuimodel.SearchUiModel
 
 
 @Composable
@@ -45,6 +47,12 @@ fun HomeNavGraph(
         composable(route = "${TvSeriesDetailScreens.TvSeriesDetailScreen.route}/{series_id}") { backStackEntry ->
             val seriesId = backStackEntry.arguments?.getString("series_id")
             TvDetailScreen(seriesId = seriesId!!.toInt())
+        }
+
+        composable(route = BottomBarScreen.Search.route) {
+            SearchScreen(
+                navController = navController
+            )
         }
     }
 }

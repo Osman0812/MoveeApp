@@ -17,4 +17,12 @@
     <string name="tv_series_top_rated">En Çok Oy Alan</string>
     <string name="tv_series_detail_screen_creator">Yaratıcılar:</string>
 
+    //Search Screen Values
+    <string name= "search_screen_title">Ara</string>
+    <string name= "search_screen_cancel">İptal</string>
+    <string name= "search_screen_person">Oyuncu</string>
+    <string name= "search_screen_movie">Film</string>
+    <string name= "search_screen_tv">Diziler</string>
+    <string name="search_screen_result_not_found">Sonuç Bulunamadı!</string>
+
 </resources>

@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -25,8 +24,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.graphs.HomeNavGraph
 import com.example.myapplication.ui.BottomBarScreen
-import com.example.myapplication.ui.screen.home.movieshome.MoviesHomeScreenViewModel
-import com.example.myapplication.ui.screen.home.tvseries.TvSeriesViewModel
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -53,7 +50,8 @@ fun HomeScreen(
 private fun BottomBar(navController: NavHostController) {
     val screens = listOf(
         BottomBarScreen.Movies,
-        BottomBarScreen.TvSeries
+        BottomBarScreen.TvSeries,
+        BottomBarScreen.Search,
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination

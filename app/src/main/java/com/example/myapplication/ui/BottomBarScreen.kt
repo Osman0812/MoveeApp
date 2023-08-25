@@ -18,4 +18,9 @@ sealed class BottomBarScreen(
         unselectedIcon = R.drawable.ic_bottombar_tv_series,
         selectedIcon = R.drawable.ic_bottombar_tv_series_selected
     )
+    object Search : BottomBarScreen(
+        route = "SEARCH_SCREEN",
+        unselectedIcon = R.drawable.icons_tabbar_search,
+        selectedIcon = R.drawable.icons_tabbar_search_selected
+    )
 }

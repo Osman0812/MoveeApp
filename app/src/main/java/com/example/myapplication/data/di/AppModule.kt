@@ -5,6 +5,7 @@ import com.example.myapplication.BuildConfig
 import com.example.myapplication.data.remote.network.ApiInterceptor
 import com.example.myapplication.data.remote.service.AuthService
 import com.example.myapplication.data.remote.service.MoviesService
+import com.example.myapplication.data.remote.service.SearchService
 import com.example.myapplication.data.remote.service.TvSeriesService
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -24,15 +25,18 @@ object AppModule {
     fun provideApiKeyInterceptor(): ApiInterceptor {
         return ApiInterceptor(BuildConfig.TMDB_API_KEY)
     }
+
     @Provides
     @Singleton
     fun provideGson(): Gson = Gson()
+
     @Provides
     fun provideOkHttpClient(apiInterceptor: ApiInterceptor): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(apiInterceptor)
             .build()
     }
+
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit =
@@ -41,6 +45,7 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create(gson))
             .baseUrl(BuildConfig.BASE_URL)
             .build()
+
     @Provides
     @Singleton
     fun provideAuthService(retrofit: Retrofit): AuthService =
@@ -55,4 +60,9 @@ object AppModule {
     @Singleton
     fun provideTvSeriesService(retrofit: Retrofit): TvSeriesService =
         retrofit.create(TvSeriesService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideSearchService(retrofit: Retrofit): SearchService =
+        retrofit.create(SearchService::class.java)
 }
