@@ -3,6 +3,7 @@ package com.example.myapplication.data.di
 
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.data.remote.network.ApiInterceptor
+import com.example.myapplication.data.remote.service.ActorService
 import com.example.myapplication.data.remote.service.AuthService
 import com.example.myapplication.data.remote.service.MoviesService
 import com.example.myapplication.data.remote.service.SearchService
@@ -60,6 +61,11 @@ object AppModule {
     @Singleton
     fun provideTvSeriesService(retrofit: Retrofit): TvSeriesService =
         retrofit.create(TvSeriesService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideActorService(retrofit: Retrofit): ActorService =
+        retrofit.create(ActorService::class.java)
 
     @Provides
     @Singleton

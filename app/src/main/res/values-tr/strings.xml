@@ -2,6 +2,8 @@
     <string name="app_name">My Application</string>
     <string name="ic_we">Biz</string>
     <string name="ic_movie">Film</string>
+
+    //My Values
     <string name="email">Email</string>
     <string name="password">Şifre</string>
     <string name="forgot_password">Şifremi Unuttum?</string>
@@ -16,7 +18,10 @@
     <string name="tv_series_title">Diziler</string>
     <string name="tv_series_top_rated">En Çok Oy Alan</string>
     <string name="tv_series_detail_screen_creator">Yaratıcılar:</string>
-
+    <string name="tv_series_cast">Döküm</string>
+    <string name="actor_birth">Doğum:</string>
+    <string name="see_less_bio">Daha Az >></string>
+    <string name="see_full_bio">Daha Fazla >></string>
     //Search Screen Values
     <string name= "search_screen_title">Ara</string>
     <string name= "search_screen_cancel">İptal</string>
@@ -24,5 +29,6 @@
     <string name= "search_screen_movie">Film</string>
     <string name= "search_screen_tv">Diziler</string>
     <string name="search_screen_result_not_found">Sonuç Bulunamadı!</string>
+
 
 </resources>

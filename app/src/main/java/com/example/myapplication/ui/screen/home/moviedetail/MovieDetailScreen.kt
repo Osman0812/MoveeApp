@@ -105,7 +105,7 @@ fun MovieDetailScreen(movieId: Int) {
 
 
 @Composable
-private fun MovieCover(
+fun MovieCover(
     modifier: Modifier = Modifier,
     imagePath: String,
     movieRate: String
@@ -310,13 +310,12 @@ fun CircularProgress() {
 }
 
 @Composable
-private fun StatusBarColor() {
+fun StatusBarColor() {
     val systemUIController = rememberSystemUiController()
     LaunchedEffect(key1 = false) {
         systemUIController.isStatusBarVisible = false
     }
 }
-
 
 @Preview
 @Composable
