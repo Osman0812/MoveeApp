@@ -16,7 +16,7 @@ object Constants {
     const val TV_GENRES_PATH = "/3/genre/tv/list"
     const val TOP_RATED_TV_SERIES = "3/tv/top_rated"
     const val SINGLE_TV_PATH = "3/tv/{series_id}"
-    const val TV_CREDITS_PATH = "/3/tv/{series}/credits"
+    const val TV_CREDITS_PATH = "/3/tv/{series_id}/credits"
 
     const val SEARCH_MULTI_PATH = "/3/search/multi"
 

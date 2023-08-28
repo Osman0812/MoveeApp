@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.myapplication.R
 import com.example.myapplication.data.repository.TvSeriesRepository
 import com.example.myapplication.ui.screen.home.moviedetail.MovieDetailScreenViewModel
-import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesUICredits
+import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesUiCredits
 import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesUiModel
 import com.example.myapplication.util.Constants
 import com.example.myapplication.util.state.ApiResult
@@ -23,8 +23,8 @@ class TvDetailScreenViewModel @Inject constructor(private val tvSeriesRepository
         MutableStateFlow<DataState<TvSeriesUiModel>>(DataState.Loading)
     val singleTvInfoFlow: StateFlow<DataState<TvSeriesUiModel>> get() = _singleTvInfoFlow
     private val _tvCreditsFlow =
-        MutableStateFlow<DataState<TvSeriesUICredits>>(DataState.Loading)
-    val tvCreditsFlow: StateFlow<DataState<TvSeriesUICredits>> get() = _tvCreditsFlow
+        MutableStateFlow<DataState<TvSeriesUiCredits>>(DataState.Loading)
+    val tvCreditsFlow: StateFlow<DataState<TvSeriesUiCredits>> get() = _tvCreditsFlow
 
     fun getSingleTvInfo(seriesId: Int) {
         viewModelScope.launch {
@@ -64,7 +64,7 @@ class TvDetailScreenViewModel @Inject constructor(private val tvSeriesRepository
                     val tvCredits = apiResponse.response.body()
                     if (tvCredits != null) {
                         _tvCreditsFlow.value = DataState.Success(
-                            TvSeriesUICredits(
+                            TvSeriesUiCredits(
                                 cast = tvCredits.cast,
                             )
                         )
@@ -77,13 +77,12 @@ class TvDetailScreenViewModel @Inject constructor(private val tvSeriesRepository
                             MovieDetailScreenViewModel.ErrorMessages.GENERIC_ERROR
                         )
                     )
-
                 }
             }
         }
     }
 
-    fun createProfileImageUrl(profilePath: String?): String {
+    fun createProfileImageUrl(profilePath: String? = null): String {
         val baseUrl = Constants.IMAGE_URL
         return if (!profilePath.isNullOrBlank()) {
             "$baseUrl$profilePath"

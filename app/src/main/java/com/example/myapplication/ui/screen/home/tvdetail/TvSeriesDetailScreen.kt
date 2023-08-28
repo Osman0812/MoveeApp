@@ -40,11 +40,9 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
 import com.example.myapplication.graphs.ActorScreens
-import com.example.myapplication.graphs.MoviesScreens
 import com.example.myapplication.ui.components.IndicatorLine
 import com.example.myapplication.ui.screen.home.moviedetail.MovieDetailScreenViewModel
-import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesUICredits
-import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesDiretorsUiModel
+import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesUiCredits
 import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesUiModel
 import com.example.myapplication.ui.screen.home.tvseries.TvSeriesRate
 import com.example.myapplication.util.Constants
@@ -66,46 +64,46 @@ fun TvDetailScreen(seriesId: Int, navHostController: NavHostController) {
 
         is DataState.Success -> {
             val tvSeries = tvInfo.data
-            var summary = TvSeriesUICredits()
-
             when (tvSummary) {
-                is DataState.Success -> {
-                    summary = tvSummary.data
+                is DataState.Loading -> {
+                    CircularProgress()
                 }
-
-                else -> TvSeriesDiretorsUiModel()
-            }
-
-            Column(
-                modifier = Modifier
-                    .verticalScroll(scrollState)
-                    .padding(bottom = 10.dp)
-            ) {
-                tvSeries.tvPosterPath?.let { image ->
-                    tvSeries.tvVoteAverage?.let { vote ->
-                        TvCover(
-                            modifier = Modifier,
-                            imagePath = image,
-                            tvRate = vote
+                is DataState.Success -> {
+                    val summary = tvSummary.data
+                    Column(
+                        modifier = Modifier
+                            .verticalScroll(scrollState)
+                            .padding(bottom = 10.dp)
+                    ) {
+                        tvSeries.tvPosterPath?.let { image ->
+                            tvSeries.tvVoteAverage?.let { vote ->
+                                TvCover(
+                                    modifier = Modifier,
+                                    imagePath = image,
+                                    tvRate = vote
+                                )
+                            }
+                        }
+                        TvSeriesInfo(
+                            modifier = Modifier
+                                .padding(start = 32.dp, end = 32.dp, top = 8.dp),
+                            tvSeriesUiModel = tvSeries
+                        )
+                        TvSeriesSummary(
+                            modifier = Modifier
+                                .padding(start = 32.dp, end = 32.dp, top = 16.dp),
+                            tvSeriesUiModel = tvSeries,
+                        )
+                        Actors(
+                            tvCredits = summary,
+                            viewModel = viewModel,
+                            navHostController = navHostController
                         )
                     }
                 }
-                TvSeriesInfo(
-                    modifier = Modifier
-                        .padding(start = 32.dp, end = 32.dp, top = 8.dp),
-                    tvSeriesUiModel = tvSeries
-                )
-                TvSeriesSummary(
-                    modifier = Modifier
-                        .padding(start = 32.dp, end = 32.dp, top = 16.dp),
-                    tvSeriesUiModel = tvSeries,
-                )
-
-                Actors(
-                    tvCredits = summary,
-                    viewModel = viewModel,
-                    navHostController = navHostController
-                )
+                is DataState.Error -> {
+                    DataState.Error(Exception(MovieDetailScreenViewModel.ErrorMessages.GENERIC_ERROR))
+                }
             }
         }
 
@@ -239,20 +237,16 @@ private fun TvSeriesSummary(
             text = tvSeriesUiModel.tvOverview.toString(),
             style = MaterialTheme.typography.titleLarge.copy(fontSize = 17.sp)
         )
-
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val labelCreator = stringResource(id = R.string.tv_series_detail_screen_creator)
-
             tvSeriesUiModel.createBy?.joinToString { it.name }?.let {
                 TvSummaryExtension(
                     labelName = labelCreator,
                     directorName = it
                 )
             }
-
-
             tvSeriesUiModel.tvNumberOfSeasons?.let {
                 SeasonsView("$it seasons")
             }
@@ -300,7 +294,7 @@ fun SeasonsView(
 
 @Composable
 fun Actors(
-    tvCredits: TvSeriesUICredits,
+    tvCredits: TvSeriesUiCredits,
     viewModel: TvDetailScreenViewModel,
     navHostController: NavHostController
 ) {
@@ -322,8 +316,7 @@ fun Actors(
             horizontalArrangement = Arrangement.spacedBy(30.dp)
         ) {
             val castList = tvCredits.cast
-            println(castList?.get(0))
-            if (castList != null) {
+            if (!castList.isNullOrEmpty()) {
                 for (actor in castList) {
                     Column(
                         verticalArrangement = Arrangement.SpaceEvenly,

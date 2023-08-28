@@ -35,6 +35,7 @@ abstract class SafeApiRequest {
                 }
             }
         } catch (e: java.lang.Exception) {
+            println(e.message.toString())
             return ApiResult.Error("Network Error!")
         }
     }

@@ -20,11 +20,9 @@ interface TvSeriesService {
     suspend fun getTopRatedTVSeries(
         @Query("page") pageNumber: Int
     ): Response<TvSeriesDto>
-
     @GET(TV_GENRES_PATH)
     suspend fun getTVSeriesGenres(
     ): Response<GenresDto>
-
     @GET(POPULAR_TV_PATH)
     suspend fun getPopularTVSeries(
         @Query("page") page: Int
