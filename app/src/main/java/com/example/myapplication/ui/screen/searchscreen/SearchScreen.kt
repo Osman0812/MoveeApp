@@ -214,13 +214,15 @@ private fun SearchList(
                 }
                 items(searchResults.itemCount) { searchResult ->
                     val searchItem = searchResults[searchResult]
-                    SingleSearchItem(
-                        modifier = Modifier
-                            .width((screenWidth() * 0.869f).dp)
-                            .height((screenHeight() * 0.156f).dp),
-                        navController = navController,
-                        searchResult = searchItem!!
-                    )
+                    if (searchItem != null) {
+                        SingleSearchItem(
+                            modifier = Modifier
+                                .width((screenWidth() * 0.869f).dp)
+                                .height((screenHeight() * 0.156f).dp),
+                            navController = navController,
+                            searchResult = searchItem
+                        )
+                    }
                 }
             }
 

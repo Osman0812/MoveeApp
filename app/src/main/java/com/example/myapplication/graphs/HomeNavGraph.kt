@@ -34,7 +34,9 @@ fun HomeNavGraph(
 
         composable(route = "${MoviesScreens.MovieDetailScreen.route}/{movie_id}") { backStackEntry ->
             val movieId = backStackEntry.arguments?.getString("movie_id")
-            MovieDetailScreen(movieId = movieId!!.toInt())
+            if (movieId != null) {
+                MovieDetailScreen(movieId = movieId.toInt())
+            }
         }
 
         composable(route = BottomBarScreen.TvSeries.route) {
@@ -46,7 +48,9 @@ fun HomeNavGraph(
         }
         composable(route = "${TvSeriesDetailScreens.TvSeriesDetailScreen.route}/{series_id}") { backStackEntry ->
             val seriesId = backStackEntry.arguments?.getString("series_id")
-            TvDetailScreen(seriesId = seriesId!!.toInt())
+            if (seriesId != null) {
+                TvDetailScreen(seriesId = seriesId.toInt())
+            }
         }
 
         composable(route = BottomBarScreen.Search.route) {
