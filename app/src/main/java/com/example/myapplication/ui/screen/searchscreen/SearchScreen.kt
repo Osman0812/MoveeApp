@@ -254,7 +254,6 @@ private fun SystemUI(color: Color, fileSystemWindows: Boolean) {
     }
 }
 
-
 @Composable
 fun screenHeight(): Int {
     return phoneConfiguration().screenHeightDp
@@ -264,7 +263,6 @@ fun screenHeight(): Int {
 fun screenWidth(): Int {
     return phoneConfiguration().screenWidthDp
 }
-
 
 @Composable
 private fun phoneConfiguration(): Configuration {
@@ -377,6 +375,7 @@ fun getMediaType(type: String): MediaTypeUiModel {
     return when (type) {
         Constants.MOVIE -> MediaTypeUiModel.Movie
         Constants.TV -> MediaTypeUiModel.TvSeries
+        Constants.ACTOR -> MediaTypeUiModel.Actor
         else -> throw IllegalArgumentException("Unknown media type: $type")
     }
 }

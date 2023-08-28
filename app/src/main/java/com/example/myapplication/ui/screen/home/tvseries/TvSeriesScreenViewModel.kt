@@ -17,10 +17,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TvSeriesViewModel @Inject constructor(private val tvSeriesRepository: TvSeriesRepository): ViewModel() {
+class TvSeriesViewModel @Inject constructor(private val tvSeriesRepository: TvSeriesRepository) :
+    ViewModel() {
 
-    val tvSeriesTopRatedFlow: Flow<PagingData<ResultDto>> = tvSeriesRepository.getTopRatedTVSeries().cachedIn(viewModelScope)
-    val tvSeriesPopularFlow: Flow<PagingData<ResultDto>> = tvSeriesRepository.getPopularTVSeries().cachedIn(viewModelScope)
+    val tvSeriesTopRatedFlow: Flow<PagingData<ResultDto>> =
+        tvSeriesRepository.getTopRatedTVSeries().cachedIn(viewModelScope)
+    val tvSeriesPopularFlow: Flow<PagingData<ResultDto>> =
+        tvSeriesRepository.getPopularTVSeries().cachedIn(viewModelScope)
     private val _allGenresFlow = MutableStateFlow<DataState<List<GenreDto>>>(DataState.Loading)
     val tvSeriesGenresFlow: StateFlow<DataState<List<GenreDto>>> get() = _allGenresFlow
 
@@ -30,16 +33,15 @@ class TvSeriesViewModel @Inject constructor(private val tvSeriesRepository: TvSe
 
     private fun getAllGenres() {
         viewModelScope.launch {
-            val apiResponse = tvSeriesRepository.getTvSeriesAllGenres()
 
-            when (apiResponse) {
+            when (val apiResponse = tvSeriesRepository.getTvSeriesAllGenres()) {
                 is ApiResult.Success -> {
                     val genres = apiResponse.response.body()?.genres
                     _allGenresFlow.value = DataState.Success(genres ?: emptyList())
                 }
 
                 is ApiResult.Error -> {
-                    _allGenresFlow.value = DataState.Error(Exception("Genres Error!"))
+                    _allGenresFlow.value = DataState.Error(Exception())
                 }
             }
         }

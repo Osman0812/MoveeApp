@@ -7,8 +7,11 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.filter
 import androidx.paging.map
+import com.example.myapplication.data.model.actormodel.ActorDetailsModel
+import com.example.myapplication.data.model.actortvcreditsmodel.ActorTvCredits
 import com.example.myapplication.data.model.moviecreditsmodel.MovieCreditsDto
 import com.example.myapplication.data.model.tvseriescreditsmodel.TvSeriesCreditsDto
+import com.example.myapplication.data.repository.ActorRepository
 import com.example.myapplication.data.repository.MoviesRepository
 import com.example.myapplication.data.repository.SearchRepository
 import com.example.myapplication.data.repository.TvSeriesRepository
@@ -31,6 +34,8 @@ class SearchScreenViewModel @Inject constructor(
     private val searchRepository: SearchRepository,
     private val tvRepository: TvSeriesRepository,
     private val moviesRepository: MoviesRepository,
+    private val actorRepository: ActorRepository
+
 ) : ViewModel() {
     var searchState = mutableStateOf("")
     private val _searchQuery = MutableStateFlow("")
@@ -40,7 +45,7 @@ class SearchScreenViewModel @Inject constructor(
     val searchResultFlow: Flow<PagingData<SearchUiModel>> = searchQuery.flatMapLatest { query ->
         searchRepository.searchItems(query).map { pagingData ->
             pagingData.filter { item ->
-                item.mediaType in listOf(Constants.MOVIE, Constants.TV)
+                item.mediaType in listOf(Constants.MOVIE, Constants.TV, Constants.ACTOR)
             }.map { searchItem ->
                 DataTransformer.transformData(searchItem) { item ->
                     val mediaTypeUiModel = getMediaTypeUiModel(
@@ -81,6 +86,7 @@ class SearchScreenViewModel @Inject constructor(
         return when (description.type) {
             Constants.TV -> getTvCast(id)
             Constants.MOVIE -> getMovieCast(id)
+            Constants.ACTOR -> getActorsBirth(id)
             else -> ErrorMessages.DESCRIPTION_ERROR
         }
     }
@@ -115,6 +121,27 @@ class SearchScreenViewModel @Inject constructor(
         }
     }
 
+    private suspend fun getActorsBirth(
+        personId: Int,
+    ): String {
+        when (val apiResponse = actorRepository.getActorDetails(personId)) {
+            is ApiResult.Success -> {
+                val actorDetails = apiResponse.response.body()
+                if (actorDetails != null){
+                    val birthDate = actorDetails.birthday
+                    val placeOfBirth = actorDetails.placeOfBirth
+                    println(birthDate + placeOfBirth)
+                    return DataTransformer.concatBornStatus(birthDate, placeOfBirth)
+                }
+            }
+
+            is ApiResult.Error -> {
+                return ErrorMessages.ACTOR_BIRTH_ERROR
+            }
+        }
+        return ""
+    }
+
     private suspend fun getMovieCast(seriesId: Int): String {
         return getMovieCast(seriesId, moviesRepository::getMovieCredits)
     }
@@ -127,6 +154,7 @@ class SearchScreenViewModel @Inject constructor(
         return when (type) {
             Constants.MOVIE -> MediaTypeUiModel.Movie
             Constants.TV -> MediaTypeUiModel.TvSeries
+            Constants.ACTOR -> MediaTypeUiModel.Actor
             else -> throw IllegalArgumentException("Unknown media type: $type")
         }
     }
@@ -135,5 +163,6 @@ class SearchScreenViewModel @Inject constructor(
         const val TV_ERROR = "Failed to get TvCast!"
         const val MOVIE_ERROR = "Failed to get MovieCast!"
         const val DESCRIPTION_ERROR = "Failed to get Description!"
+        const val ACTOR_BIRTH_ERROR = "Failed to get Actor Birth Details!"
     }
 }

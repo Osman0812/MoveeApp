@@ -62,7 +62,7 @@ class TvDetailScreenViewModel @Inject constructor(private val tvSeriesRepository
             when (val apiResponse = tvSeriesRepository.getTvSeriesCredits(seriesId)) {
                 is ApiResult.Success -> {
                     val tvCredits = apiResponse.response.body()
-                    if (tvCredits != null){
+                    if (tvCredits != null) {
                         _tvCreditsFlow.value = DataState.Success(
                             TvSeriesUICredits(
                                 cast = tvCredits.cast,
@@ -72,7 +72,12 @@ class TvDetailScreenViewModel @Inject constructor(private val tvSeriesRepository
                 }
 
                 is ApiResult.Error -> {
-                    _tvCreditsFlow.value = DataState.Error(Exception("Data cannot be fetched!"))
+                    _tvCreditsFlow.value = DataState.Error(
+                        Exception(
+                            MovieDetailScreenViewModel.ErrorMessages.GENERIC_ERROR
+                        )
+                    )
+
                 }
             }
         }

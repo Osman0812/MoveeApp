@@ -331,7 +331,6 @@ fun Actors(
                             .clickable {
                                 navHostController.navigate("${ActorScreens.ActorDetailScreen.route}/${actor.id}")
                             },
-
                         ) {
                         val profileImageUrl =
                             viewModel.createProfileImageUrl(actor.profilePath)

@@ -2,6 +2,7 @@ package com.example.myapplication.ui.screen.searchscreen.searchscreenuimodel
 
 import androidx.navigation.NavController
 import com.example.myapplication.R
+import com.example.myapplication.graphs.ActorScreens
 import com.example.myapplication.graphs.MoviesScreens
 import com.example.myapplication.graphs.TvSeriesDetailScreens
 import com.example.myapplication.util.Constants
@@ -36,6 +37,17 @@ sealed class MediaTypeUiModel(
         getItemImage = { _, posterPath -> posterPath },
         navigateAction = { itemId, navController ->
             navController.navigate("${TvSeriesDetailScreens.TvSeriesDetailScreen.route}/$itemId")
+        }
+    )
+
+    object Actor : MediaTypeUiModel(
+        iconResId = R.drawable.ic_actor_img,
+        type = Constants.ACTOR,
+        stringResourceId = R.string.search_screen_person,
+        getItemName = { name, _ -> name },
+        getItemImage = { profilePath, _ -> profilePath ?: ""},
+        navigateAction = { itemId, navController ->
+            navController.navigate("${ActorScreens.ActorDetailScreen.route}/$itemId")
         }
     )
 }
