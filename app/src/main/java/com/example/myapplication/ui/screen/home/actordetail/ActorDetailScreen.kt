@@ -1,8 +1,6 @@
 package com.example.myapplication.ui.screen.home.actordetail
 
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,7 +44,7 @@ import com.example.myapplication.R
 import com.example.myapplication.graphs.MoviesScreens
 import com.example.myapplication.graphs.TvSeriesDetailScreens
 import com.example.myapplication.ui.screen.home.actordetail.actordetailsuimodel.ActorCreditUIModel
-import com.example.myapplication.ui.screen.home.actordetail.actordetailsuimodel.ActorDetailsUIModel
+import com.example.myapplication.ui.screen.home.actordetail.actordetailsuimodel.ActorDetailsUi
 import com.example.myapplication.ui.screen.home.moviedetail.CircularProgress
 import com.example.myapplication.ui.screen.home.moviedetail.MovieDetailScreenViewModel
 import com.example.myapplication.ui.screen.home.moviedetail.StatusBarColor
@@ -59,7 +57,6 @@ import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 @OptIn(ExperimentalMaterial3Api::class)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ActorDetailScreen(actorId: Int, navController: NavHostController) {
     val configuration = LocalConfiguration.current
@@ -160,7 +157,7 @@ fun ActorDetailScreen(actorId: Int, navController: NavHostController) {
 @Composable
 fun ActorCover(
     modifier: Modifier = Modifier,
-    actorInfo: ActorDetailsUIModel
+    actorInfo: ActorDetailsUi
 ) {
     val imagePath = actorInfo.profilePath
     val asyncImage = Constants.IMAGE_URL + imagePath
@@ -177,11 +174,10 @@ fun ActorCover(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun ActorInfo(
     modifier: Modifier = Modifier,
-    actorInfo: ActorDetailsUIModel
+    actorInfo: ActorDetailsUi
 ) {
     val actorName = actorInfo.name
     val actorBiography = actorInfo.biography
@@ -241,15 +237,12 @@ private fun ActorInfo(
             Text(
                 text = stringResource(id = R.string.actor_birth),
                 style = MaterialTheme.typography.titleMedium,
-
-
-                )
+            )
             Text(
                 modifier = Modifier.padding(top = 4.dp),
                 text = "$birthdateFormatted, $actorBirthPlace"
             )
         }
-
     }
 }
 

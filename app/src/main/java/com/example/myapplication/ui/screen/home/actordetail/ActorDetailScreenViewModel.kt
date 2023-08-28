@@ -3,8 +3,8 @@ package com.example.myapplication.ui.screen.home.actordetail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.data.repository.ActorRepository
-import com.example.myapplication.ui.screen.home.actordetail.actordetailsuimodel.ActorDetailsUIModel
-import com.example.myapplication.ui.screen.home.actordetail.actordetailsuimodel.ActorMovieCreditUI
+import com.example.myapplication.ui.screen.home.actordetail.actordetailsuimodel.ActorDetailsUi
+import com.example.myapplication.ui.screen.home.actordetail.actordetailsuimodel.ActorMovieCreditUi
 import com.example.myapplication.ui.screen.home.actordetail.actordetailsuimodel.ActorTVCreditUi
 import com.example.myapplication.ui.screen.home.moviedetail.MovieDetailScreenViewModel
 import com.example.myapplication.util.state.ApiResult
@@ -19,12 +19,12 @@ import javax.inject.Inject
 class ActorDetailScreenViewModel @Inject constructor(private val actorRepository: ActorRepository) :
     ViewModel() {
     private val _singleActorInfoFlow =
-        MutableStateFlow<DataState<ActorDetailsUIModel>>(DataState.Loading)
-    val singleActorInfoFlow: StateFlow<DataState<ActorDetailsUIModel>> get() = _singleActorInfoFlow
+        MutableStateFlow<DataState<ActorDetailsUi>>(DataState.Loading)
+    val singleActorInfoFlow: StateFlow<DataState<ActorDetailsUi>> get() = _singleActorInfoFlow
 
     private val _movieCreditsFlow =
-        MutableStateFlow<DataState<ActorMovieCreditUI>>(DataState.Loading)
-    val movieCreditsFlow: StateFlow<DataState<ActorMovieCreditUI>> get() = _movieCreditsFlow
+        MutableStateFlow<DataState<ActorMovieCreditUi>>(DataState.Loading)
+    val movieCreditsFlow: StateFlow<DataState<ActorMovieCreditUi>> get() = _movieCreditsFlow
     private val _tvCreditsFlow =
         MutableStateFlow<DataState<ActorTVCreditUi>>(DataState.Loading)
     val tvCreditsFlow: StateFlow<DataState<ActorTVCreditUi>> get() = _tvCreditsFlow
@@ -35,7 +35,7 @@ class ActorDetailScreenViewModel @Inject constructor(private val actorRepository
                     val actorInfo = apiResponse.response.body()
                     if (actorInfo != null) {
                         _singleActorInfoFlow.value = DataState.Success(
-                            ActorDetailsUIModel(
+                            ActorDetailsUi(
                                 profilePath = actorInfo.profilePath,
                                 placeOfBirth = actorInfo.placeOfBirth,
                                 birthday = actorInfo.birthday,
@@ -62,7 +62,7 @@ class ActorDetailScreenViewModel @Inject constructor(private val actorRepository
                     val movieCredits = apiResponse.response.body()
                     if (movieCredits != null) {
                         _movieCreditsFlow.value = DataState.Success(
-                            ActorMovieCreditUI(
+                            ActorMovieCreditUi(
                                 cast = movieCredits.cast,
                                 crew = movieCredits.crew,
                                 id = movieCredits.id

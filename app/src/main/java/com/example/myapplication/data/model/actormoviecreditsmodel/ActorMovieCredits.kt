@@ -1,7 +1,7 @@
 package com.example.myapplication.data.model.actormoviecreditsmodel
 
 data class ActorMovieCredits(
-    val cast: List<CastDto>,
-    val crew: List<CrewDto>,
+    val cast: List<ActorMovieCastDto>,
+    val crew: List<ActorMovieCrewDto>,
     val id: Int
 )

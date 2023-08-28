@@ -2,7 +2,7 @@ package com.example.myapplication.data.model.actortvcreditsmodel
 
 import com.google.gson.annotations.SerializedName
 
-data class CastDto(
+data class ActorTvCastDto(
     val adult: Boolean,
     @SerializedName("backdrop_path")
     val backdropPath: String,
