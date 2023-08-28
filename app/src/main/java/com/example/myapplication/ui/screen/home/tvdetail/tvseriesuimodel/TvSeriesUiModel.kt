@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel
 
 import com.example.myapplication.data.model.genresmodel.GenreDto
+import com.example.myapplication.data.model.singletvmodel.CreatedByDto
 
 data class TvSeriesUiModel(
     var tvPosterPath: String? = null,
@@ -11,4 +12,5 @@ data class TvSeriesUiModel(
     var tvReleaseDate: String? = null,
     var tvOverview: String? = null,
     val tvNumberOfSeasons: Int? = null,
+    val createBy: List<CreatedByDto>? = null
 )

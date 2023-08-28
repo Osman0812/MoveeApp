@@ -18,4 +18,8 @@
     <string name="tv_series_title">Tv Series</string>
     <string name="tv_series_top_rated">Top Rated</string>
     <string name="tv_series_detail_screen_creator">Creators:</string>
+    <string name="tv_series_cast">Cast</string>
+    <string name="actor_birth">Born:</string>
+    <string name="see_less_bio">See Less >></string>
+    <string name="see_full_bio">See Full Bio >></string>
 </resources>

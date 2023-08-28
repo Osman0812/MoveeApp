@@ -2,16 +2,20 @@ package com.example.myapplication.ui.screen.home.tvdetail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
@@ -28,14 +32,18 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.example.myapplication.R
+import com.example.myapplication.graphs.ActorScreens
+import com.example.myapplication.graphs.MoviesScreens
 import com.example.myapplication.ui.components.IndicatorLine
 import com.example.myapplication.ui.screen.home.moviedetail.MovieDetailScreenViewModel
+import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesUICredits
 import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesDiretorsUiModel
 import com.example.myapplication.ui.screen.home.tvdetail.tvseriesuimodel.TvSeriesUiModel
 import com.example.myapplication.ui.screen.home.tvseries.TvSeriesRate
@@ -43,13 +51,13 @@ import com.example.myapplication.util.Constants
 import com.example.myapplication.util.state.DataState
 
 @Composable
-fun TvDetailScreen(seriesId: Int) {
+fun TvDetailScreen(seriesId: Int, navHostController: NavHostController) {
     val viewModel = hiltViewModel<TvDetailScreenViewModel>()
     val scrollState = rememberScrollState()
     val tvInfo = viewModel.singleTvInfoFlow.collectAsState().value
-    val tvSummary = viewModel.tvDirectorsFlow.collectAsState().value
+    val tvSummary = viewModel.tvCreditsFlow.collectAsState().value
     viewModel.getSingleTvInfo(seriesId)
-    viewModel.getTvSeriesWriters(seriesId)
+    viewModel.getTvSeriesCredit(seriesId)
 
     when (tvInfo) {
         is DataState.Loading -> {
@@ -58,7 +66,8 @@ fun TvDetailScreen(seriesId: Int) {
 
         is DataState.Success -> {
             val tvSeries = tvInfo.data
-            var summary = TvSeriesDiretorsUiModel()
+            var summary = TvSeriesUICredits()
+
             when (tvSummary) {
                 is DataState.Success -> {
                     summary = tvSummary.data
@@ -90,7 +99,12 @@ fun TvDetailScreen(seriesId: Int) {
                     modifier = Modifier
                         .padding(start = 32.dp, end = 32.dp, top = 16.dp),
                     tvSeriesUiModel = tvSeries,
-                    tvSeriesWritersUiModel = summary,
+                )
+
+                Actors(
+                    tvCredits = summary,
+                    viewModel = viewModel,
+                    navHostController = navHostController
                 )
             }
         }
@@ -103,7 +117,7 @@ fun TvDetailScreen(seriesId: Int) {
 
 @Composable
 fun TvCover(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     imagePath: String,
     tvRate: String
 ) {
@@ -214,11 +228,9 @@ private fun TvSeriesInfo(
 
 @Composable
 private fun TvSeriesSummary(
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     tvSeriesUiModel: TvSeriesUiModel,
-    tvSeriesWritersUiModel: TvSeriesDiretorsUiModel
 ) {
-
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -232,9 +244,15 @@ private fun TvSeriesSummary(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val labelCreator = stringResource(id = R.string.tv_series_detail_screen_creator)
-            tvSeriesWritersUiModel.director?.let {
-                TvSummaryExtension(labelName = labelCreator, name = it)
+
+            tvSeriesUiModel.createBy?.joinToString { it.name }?.let {
+                TvSummaryExtension(
+                    labelName = labelCreator,
+                    directorName = it
+                )
             }
+
+
             tvSeriesUiModel.tvNumberOfSeasons?.let {
                 SeasonsView("$it seasons")
             }
@@ -243,7 +261,7 @@ private fun TvSeriesSummary(
 }
 
 @Composable
-private fun TvSummaryExtension(labelName: String, name: String) {
+private fun TvSummaryExtension(labelName: String, directorName: String) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {
@@ -252,7 +270,7 @@ private fun TvSummaryExtension(labelName: String, name: String) {
             style = MaterialTheme.typography.titleLarge.copy(fontSize = 17.sp)
         )
         Text(
-            text = name,
+            text = directorName,
             style = MaterialTheme.typography.titleLarge.copy(fontSize = 17.sp),
             color = colorResource(id = R.color.blue)
         )
@@ -280,10 +298,82 @@ fun SeasonsView(
     }
 }
 
-@Preview
 @Composable
-fun TvSeriesDetailScreenPreview() {
-    TvDetailScreen(0)
+fun Actors(
+    tvCredits: TvSeriesUICredits,
+    viewModel: TvDetailScreenViewModel,
+    navHostController: NavHostController
+) {
+    val scrollState = rememberScrollState()
+    Column(
+        verticalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.padding(32.dp)
+    ) {
+        Text(
+            text = stringResource(id = R.string.tv_series_cast),
+            fontSize = 20.sp,
+            color = Color.Black,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.padding(top = 10.dp))
+        Row(
+            modifier = Modifier
+                .horizontalScroll(scrollState),
+            horizontalArrangement = Arrangement.spacedBy(30.dp)
+        ) {
+            val castList = tvCredits.cast
+            println(castList?.get(0))
+            if (castList != null) {
+                for (actor in castList) {
+                    Column(
+                        verticalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier
+                            .clickable {
+                                navHostController.navigate("${ActorScreens.ActorDetailScreen.route}/${actor.id}")
+                            },
+
+                        ) {
+                        val profileImageUrl =
+                            viewModel.createProfileImageUrl(actor.profilePath)
+                        ActorCircle(
+                            photoUrl = profileImageUrl,
+                            actorName = actor.name
+                        )
+                    }
+                }
+            }
+        }
+    }
 }
 
+@Composable
+fun ActorCircle(
+    photoUrl: String,
+    actorName: String
+) {
+    val circleSize = 80.dp
+    Column(
+        verticalArrangement = Arrangement.spacedBy(5.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .size(circleSize)
+                .background(
+                    color = Color.Transparent,
+                    shape = CircleShape
+                )
 
+        ) {
+            Image(
+                painter = rememberAsyncImagePainter(model = photoUrl),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape)
+            )
+        }
+    }
+    Text(text = actorName)
+}
